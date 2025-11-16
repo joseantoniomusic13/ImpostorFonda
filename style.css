@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  width: 100%;
+  max-width: 450px;
+  margin: 20px;
+  padding: 10px;
+  text-align: center;
+}
+
+.game-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 15px;
+  color: #ff3b3f;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  color: #0072ff;
+}
+
+.card {
+  background: #e0e5ec;
+  border-radius: 20px;
+  padding: 25px 20px;
+  margin-bottom: 20px;
+  box-shadow: 8px 8px 15px #babecc, -8px -8px 15px #ffffff;
+  transition: transform 0.2s;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+input[type="number"], input[type="text"], select {
+  padding: 12px;
+  margin: 5px 0;
+  width: 100%;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 16px;
+  box-shadow: inset 3px 3px 6px #babecc, inset -3px -3px 6px #ffffff;
+}
+
+/* Botones grandes y efecto pulsación */
+button {
+  padding: 18px 25px;
+  margin: 10px 0;
+  font-size: 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+  width: 100%;
+}
+
+button:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+}
+
+.main-btn {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: white;
+  box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
+}
+
+.main-btn:hover {
+  filter: brightness(1.1);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+
+.red-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ff3b3f);
+}
+
+/* Transiciones para mostrar roles */
+#roleDisplay {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  margin: 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff3b3f;
+}
+
+#roleDisplay.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#summaryList li {
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+#summaryList li.impostor {
+  color: #ff3b3f;
+  font-weight: bold;
+}
+
+body.night {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+}
+
+body.night .card {
+  background: #1e2a38;
+  box-shadow: 8px 8px 15px #151e26, -8px -8px 15px #293747;
+}
+
+body.night input, body.night select {
+  background: #2c3e50;
+  color: #fff;
+  border: 1px solid #3a4f63;
+  box-shadow: inset 3px 3px 6px #151e26, inset -3px -3px 6px #3a4f63;
+}
+
+body.night .main-btn {
+  box-shadow: 3px 3px 6px #151e26, -3px -3px 6px #3a4f63;
+}
+
+@media (max-width: 500px) {
+  .card {
+    padding: 20px 15px;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  h2 {
+    font-size: 1.3em;
+  }
+  .game-icon {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Pantalla completa en orientación landscape */
+@media (orientation: landscape) {
+  #roleScreen, #summaryScreen {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #roleDisplay {
+    font-size: 2.5em;
+  }
+  button {
+    width: 60%;
+    font-size: 24px;
+  }
+}
