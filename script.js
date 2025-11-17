@@ -1,165 +1,114 @@
-// ================= ELEMENTOS =================
-const numPlayersSelect = document.getElementById('numPlayersSelect');
-const playerNamesDiv = document.getElementById('playerNames');
-const numImpostorsInput = document.getElementById('numImpostors');
-const categorySelect = document.getElementById('categorySelect');
-
-const startBtn = document.getElementById('startBtn');
-const nightBtn = document.getElementById('nightModeBtn');
-
-const setupDiv = document.getElementById('setup');
-const roleScreen = document.getElementById('roleScreen');
-const turnText = document.getElementById('turnText');
-
-const flipCard = document.getElementById('flipCard');
-const flipInner = document.getElementById('flipInner');
-const roleDisplay = document.getElementById('roleDisplay');
-
-const showRoleBtn = document.getElementById('showRoleBtn');
-const nextBtn = document.getElementById('nextBtn');
-const endBtn = document.getElementById('endBtn');
-
-const summaryScreen = document.getElementById('summaryScreen');
-const summaryList = document.getElementById('summaryList');
-
-// ================= JUGADORES =================
-let players = [];
-let currentIndex = 0;
-let currentTheme = "";
-
-// ================= TEMAS =================
-const themes = {
-  Deportes:["Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación"],
-  Música:["Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica"],
-  Series:["Breaking Bad","La Casa de Papel","Stranger Things","Friends"],
-  Videojuegos:["Fortnite","Minecraft","Call of Duty","GTA","FIFA"],
-  Películas:["Harry Potter","Star Wars","Avatar","Indiana Jones"],
-  Animales:["Águilas","Leones","Tiburones","Gatos"],
-  Aleatorio:[]
-};
-Object.keys(themes).forEach(t => {
-  if(t !== "Aleatorio") themes[t].forEach(x => themes.Aleatorio.push(x));
-});
-
-// ================= GENERAR SELECT JUGADORES =================
-for(let i=3;i<=20;i++){
-  const op=document.createElement("option");
-  op.value=i;
-  op.textContent=i+" jugadores";
-  numPlayersSelect.appendChild(op);
-}
-generateInputs();
-
-numPlayersSelect.addEventListener("change", generateInputs);
-
-function generateInputs(){
-  playerNamesDiv.innerHTML="";
-  for(let i=0;i<numPlayersSelect.value;i++){
-    playerNamesDiv.innerHTML += `
-      <div class="player-card">
-        <input type="text" id="player${i}" placeholder="Jugador ${i+1}">
-      </div>`;
-  }
+:root{
+  --bg:#f4f8ff;
+  --card:#ffffff;
+  --accent:#4e73ff;
+  --accent2:#ff416c;
+  --text:#222;
+  --muted:#666;
+  --success:#28a745;
 }
 
-// ================= EMPEZAR =================
-startBtn.addEventListener("click", ()=>{
-  const numPlayers = parseInt(numPlayersSelect.value);
-  const numImpostors = parseInt(numImpostorsInput.value);
-
-  if(numImpostors >= numPlayers){
-    alert("Demasiados impostores");
-    return;
-  }
-
-  // Crear jugadores
-  players = [];
-  for(let i=0;i<numPlayers;i++){
-    const name = document.getElementById("player"+i).value.trim() || `Jugador ${i+1}`;
-    players.push({name,isImpostor:false,theme:""});
-  }
-
-  // Mezclar
-  players.sort(()=>Math.random() - 0.5);
-
-  // Asignar impostores
-  let imp=0;
-  while(imp<numImpostors){
-    let r=Math.floor(Math.random()*players.length);
-    if(!players[r].isImpostor){
-      players[r].isImpostor=true;
-      imp++;
-    }
-  }
-
-  // Tema
-  const category = categorySelect.value;
-  const list = themes[category];
-  currentTheme = list[Math.floor(Math.random()*list.length)];
-
-  players.forEach(p=>{
-    if(!p.isImpostor) p.theme=currentTheme;
-  });
-
-  // Cambiar pantalla
-  setupDiv.style.display="none";
-  roleScreen.style.display="block";
-  currentIndex=0;
-  updateTurn();
-});
-
-// ================= MOSTRAR ROL =================
-showRoleBtn.addEventListener("click", ()=>{
-  const p = players[currentIndex];
-  roleDisplay.innerText = p.isImpostor ? "IMPOSTOR" : p.theme;
-  flipCard.classList.add("flip");
-  showRoleBtn.style.display="none";
-  nextBtn.style.display="block";
-});
-
-// ================= SIGUIENTE =================
-nextBtn.addEventListener("click", ()=>{
-  flipCard.classList.remove("flip");
-  showRoleBtn.style.display="block";
-  nextBtn.style.display="none";
-
-  currentIndex++;
-  if(currentIndex < players.length){
-    updateTurn();
-  } else {
-    showSummary();
-  }
-});
-
-function updateTurn(){
-  turnText.innerText = "Turno de " + players[currentIndex].name;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:'Montserrat',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-// ================= RESUMEN =================
-function showSummary(){
-  roleScreen.style.display="none";
-  summaryScreen.style.display="block";
+/* App layout */
+.app{max-width:960px;margin:18px auto;padding:12px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:12px;cursor:default}
+.logo-icon{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:30px;transform-origin:center;animation:float 3s ease-in-out infinite}
+.logo-text h1{margin:0;font-size:20px;color:var(--accent)}
+.logo-text .subtitle{margin:0;font-size:12px;color:var(--muted)}
 
-  summaryList.innerHTML="";
-  players.forEach(p=>{
-    const li=document.createElement("li");
-    li.innerText = p.name + " - " + (p.isImpostor?"IMPOSTOR":p.theme);
-    if(p.isImpostor) li.style.color="red";
-    summaryList.appendChild(li);
-  });
+/* Tiny toggles */
+.toggles{display:flex;gap:8px}
+.tiny-btn{padding:8px 10px;border-radius:10px;border:none;background:#eee;cursor:pointer}
+
+/* Main */
+.main{display:grid;grid-template-columns:1fr;gap:16px;margin-top:12px}
+.card{background:var(--card);padding:16px;border-radius:14px;box-shadow:0 8px 30px rgba(30,50,80,0.08)}
+h2{margin-top:0}
+
+/* Form */
+label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+input[type="number"], select, input[type="text"]{
+  width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin-top:6px;font-size:15px;
+}
+.players-list .player-card{margin-top:8px}
+
+/* Rows */
+.row{display:flex;gap:10px}
+.col{flex:1}
+.controls-row{display:flex;gap:8px;margin-top:12px}
+.controls-row button{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer}
+.main-btn{background:linear-gradient(90deg,var(--accent),#355cff);color:white;font-weight:600}
+.secondary-btn{background:#f1f3f8}
+.red-btn{background:linear-gradient(90deg,#ff5c5c,#ff3b3b);color:white}
+
+/* Hint */
+.hint{display:block;color:var(--muted);margin-top:8px;font-size:13px}
+
+/* TOP ROW (timer + card) */
+.top-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* Timer ring */
+.timer-ring{width:120px;height:120px;position:relative}
+.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#eee;stroke-width:8}
+.ring-fg{fill:none;stroke:var(--accent2);stroke-width:8;stroke-dasharray:283;stroke-dashoffset:0;transition:stroke-dashoffset 0.3s linear}
+.timer-text{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--muted)}
+
+/* Flip card */
+.flip-card{width:300px;max-width:60vw;height:140px;perspective:1000px;cursor:pointer}
+.flip-card-inner{position:relative;width:100%;height:100%;transition:transform 0.7s;transform-style:preserve-3d;border-radius:12px}
+.flip-card.flip .flip-card-inner{transform:rotateY(180deg)}
+.flip-card-front,.flip-card-back{
+  position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;padding:12px;font-size:18px
+}
+.flip-card-front{background:linear-gradient(135deg,var(--accent),#6a11cb);color:white}
+.flip-card-back{background:#111;color:#fff;transform:rotateY(180deg);font-weight:700}
+
+/* Summary */
+.summary-list{list-style:none;padding:0;margin:12px 0}
+.summary-list li{padding:8px 10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px}
+
+/* Footer */
+.footer{text-align:center;margin-top:10px;color:var(--muted);font-size:12px}
+
+/* DARK MODE */
+body.dark{background:#0e1220;color:#eee}
+body.dark .card{background:#0f1724;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+body.dark .tiny-btn{background:#1b2430;color:#fff}
+body.dark .secondary-btn{background:#1b2430;color:#fff}
+
+/* PARTY MODE: animated gradient background when body has .party */
+@keyframes partyBG {
+  0%{filter:hue-rotate(0deg)}
+  25%{filter:hue-rotate(90deg)}
+  50%{filter:hue-rotate(180deg)}
+  75%{filter:hue-rotate(270deg)}
+  100%{filter:hue-rotate(360deg)}
+}
+body.party .logo-icon{animation:party 2.6s linear infinite}
+@keyframes party{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.08)}100%{transform:rotate(360deg) scale(1)}}
+
+/* small devices */
+@media (max-width:540px){
+  .top-row{flex-direction:column}
+  .flip-card{width:92%}
+  .timer-ring{width:100px;height:100px}
 }
 
-// ================= MODO NOCHE =================
-nightBtn.addEventListener("click",()=>{
-  document.body.classList.toggle("dark");
-
-  // Guardar en localStorage
-  localStorage.setItem("nightMode",
-    document.body.classList.contains("dark") ? "1" : "0"
-  );
-});
-
-// Aplicar modo guardado
-if(localStorage.getItem("nightMode")==="1"){
-  document.body.classList.add("dark");
+/* float animation for logo */
+@keyframes float {
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+  100%{transform:translateY(0)}
 }
