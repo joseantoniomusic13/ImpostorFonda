@@ -1,218 +1,165 @@
-const themes = {
- Deportes: [
-    "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf",
-    "Esgrima","Rugby","Hockey","Skate","Snowboard","Surf","Paracaidismo","Voleibol","Ping Pong","Karate",
-    "Judo","Taekwondo","Motociclismo","Automovilismo","Triatlón","Remo","Escalada","Esquí","Patinaje","Carreras de caballos",
-    "BMX","Lucha libre","Billar","Boliche","Golf Mini","Carreras de drones","Tiro con arco","Squash","Cricket",
-    "Tenis de mesa","Esquí acuático","Kitesurf","Parapente","Curling","Biatlón","Halterofilia","Motocross","Triatlón de invierno","Snowkite",
-    "Rafting","Fútbol americano","Handball","Softbol","Surf de remo","Fútbol sala","Skimboard","Parkour","Slackline","Polo"
-  ],
-  Música: [
-    "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Techno","Clásica","Jazz","Hip-Hop",
-    "Blues","Country","Salsa","Bachata","Funk","Metal","R&B","Disco","House","Dubstep",
-    "K-Pop","Vocaloid","Folk","Opera","Grunge","Punk","Soul","Rap","Gospel","Reggae",
-    "Indie","Bolero","Merengue","Cumbia","Electro Swing","Jazz Latino","Trap Español","Pop Español","Rock Español","Flamenco Fusión",
-    "Cantautores","Música Experimental","New Age","Lo-Fi","Chillout","Afrobeat","Drum & Bass","Dancehall","Synthwave","Opera Rock"
-  ],
-  Series: [
-    "Breaking Bad","La Casa de Papel","Stranger Things","The Walking Dead","Vikingos","Friends","The Office","Rick y Morty","Adventure Time","Los Simpsons",
-    "Family Guy","How I Met Your Mother","Game of Thrones","Sherlock","Black Mirror","Dexter","The Mandalorian","The Witcher","Dark","Narcos",
-    "The Boys","Westworld","Peaky Blinders","Umbrella Academy","Loki","WandaVision","Cobra Kai","Succession","Fargo","Mindhunter",
-    "Lost","The Crown","Better Call Saul","Doctor Who","Mr. Robot","V","True Detective","Ozark","Sex Education","The Good Place",
-    "Euphoria","Breaking Bad Spanish","El Internado","Gran Hotel","Merlí","Velvet","Élite","Alta Mar","La Peste","Toy Boy"
-  ],
-  Videojuegos: [
-    "Fortnite","Minecraft","Call of Duty","GTA","FIFA","Zelda","Mario Bros","Pokémon","League of Legends","Among Us",
-    "Roblox","Overwatch","Apex Legends","Valorant","Assassin's Creed","Resident Evil","The Sims","Cyberpunk","God of War","Halo",
-    "Battlefield","Rocket League","Tetris","Street Fighter","Mortal Kombat","Animal Crossing","Final Fantasy","Metroid","Starcraft","Diablo",
-    "Super Mario Odyssey","Splatoon","League of Legends Mobile","Clash Royale","Candy Crush","Pokémon Go","Hearthstone","Among Us VR","Genshin Impact","Fall Guys",
-    "Valorant Mobile","Forza Horizon","Red Dead Redemption","Elden Ring","Dota 2","PUBG","Overcooked","The Legend of Zelda BOTW","Subnautica","Monster Hunter"
-  ],
-  Películas: [
-    "Harry Potter","Star Wars","Avatar","Indiana Jones","Jurassic Park","El Señor de los Anillos","Matrix","The Avengers","Deadpool","Titanic",
-    "Spiderman","Iron Man","Hulk","Thor","Capitán América","Black Panther","Doctor Strange","Wonder Woman","Aquaman","Joker",
-    "Inception","Interstellar","Gladiator","Pirates of the Caribbean","Shrek","Toy Story","Frozen","Coco","The Lion King","Aladdin",
-    "Moana","El Orfanato","Ocho Apellidos Vascos","Los Otros","Mar Adentro","Rec","Celda 211","Torrente","El Laberinto del Fauno","Volver",
-    "La Piel que Habito","Intocable","El Gran Hotel Budapest","El Renacido","Mad Max","La La Land","Coco Chanel","El Niño","El Método","Campeones"
-  ],
-  Animales: [
-    "Águilas","Leones","Tiburones","Dinosaurios","Gatos","Perros","Animales marinos","Elefantes","Jirafas","Tigres",
-    "Lobos","Serpientes","Rinocerontes","Hipopótamos","Orcas","Delfines","Peces tropicales","Cocodrilos","Osos","Zorros",
-    "Mapaches","Pingüinos","Canguros","Lémures","Nutrias","Búhos","Murciélagos","Caballos","Gorilas","Chimpancés",
-    "Avestruz","Cisnes","Focas","Leones Marinos","Camellos","Pandas","Iguanas","Tortugas","Mono Araña","Cocodrilos del Nilo",
-    "Ranas","Salamandras","Caracoles","Erizos","Ballenas","Orangutanes","Cheetah","Oso Polar","Lince","Búfalo"
-  ],
-  Ciencia: [
-    "Física","Química","Biología","Matemáticas","Astronomía","Genética","Ecología","Robótica","Inteligencia Artificial","Nanotecnología",
-    "Neurociencia","Ingeniería","Informática","Meteorología","Geología","Astrobiología","Psicología","Sociología","Antropología","Oceanografía",
-    "Química Orgánica","Química Inorgánica","Biotecnología","Astrofísica","Electrónica","Telecomunicaciones","Ingeniería Biomédica","Ingeniería Aeroespacial","Cibernética","Bioquímica",
-    "Climatología","Microbiología","Física Cuántica","Genómica","Biología Marina","Ingeniería Genética","Ingeniería Nuclear","Física de Partículas","Teoría de Cuerdas","Matemática Pura",
-    "Neurotecnología","Nanomedicina","Psicología Experimental","Ecología Urbana","Ingeniería de Materiales","Bioinformática","Astronomía Observacional","Ingeniería Civil","Ingeniería de Software","Oceanografía Profunda"
-  ],
-  Arte: [
-    "Pintura","Escultura","Fotografía","Dibujo","Graffiti","Arquitectura","Diseño Gráfico","Arte Digital","Caligrafía","Cerámica",
-    "Origami","Collage","Performance","Arte Urbano","Diseño de Moda","Ilustración","Mosaico","Vidrieras","Tatuaje","Arte Conceptual",
-    "Arte Abstracto","Pop Art","Arte Contemporáneo","Arte Renacentista","Cubismo","Surrealismo","Expresionismo","Impresionismo","Land Art","Street Art",
-    "Diseño Industrial","Diseño de Interiores","Arte Kitsch","Arte Minimalista","Arte Neofigurativo","Arte Decorativo","Arte Figurativo","Arte Experimental","Arte Sonoro","Arte Cinético"
-  ],
-  Comida: [
-    "Pizza","Hamburguesa","Tacos","Sushi","Chocolate","Helado","Frutas","Verduras","Postres","Bebidas",
-    "Pasta","Risotto","Paella","Ceviche","Empanadas","Curry","Chili","Hot Dog","Panqueques","Waffles",
-    "Donuts","Bebidas energéticas","Smoothies","Sopas","Ensaladas","Mariscos","Quesos","Carnes asadas","Bollería","Tapas",
-    "Croquetas","Gazpacho","Salmorejo","Arepas","Falafel","Tortilla Española","Baguette","Burrito","Dim Sum","Bruschetta",
-    "Sándwiches","Café","Té","Chocolate caliente","Mousse","Fondue","Cevapcici","Yakitori","Kebab","Ramen"
-  ],
-  Famosos: [
-    "Cristiano Ronaldo", "Lionel Messi", "LeBron James", "Michael Jordan", "Serena Williams", "Roger Federer", "Rafael Nadal",
-    "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Scarlett Johansson", "Will Smith", "Dwayne Johnson",
-    "Robert Downey Jr.", "Jennifer Lopez", "Shakira", "Beyoncé", "Taylor Swift", "Ariana Grande", "Kanye West", "Elon Musk",
-    "Bill Gates", "Oprah Winfrey", "Kim Kardashian", "Emma Watson", "Chris Hemsworth", "Gal Gadot", "Zendaya", "Harry Styles",
-    "Selena Gomez", "Justin Bieber", "Ed Sheeran", "Kylie Jenner", "Dua Lipa", "Drake", "Cardi B", "Rihanna", "Tom Hanks",
-    "Penélope Cruz", "Antonio Banderas", "Javier Bardem", "Salma Hayek", "Pablo Alborán", "Rosalía", "David Bisbal",
-    "Miguel Bosé", "Sergio Ramos", "Iker Casillas", "Fernando Torres", "Andrés Iniesta", "Pau Gasol", "Marc Gasol",
-    "Almodóvar", "Blanca Suárez", "Úrsula Corberó", "Pedro Alonso", "Álvaro Morte", "Mario Casas", "Elsa Pataky",
-    "Sara Carbonero", "Alejandro Sanz", "Antonio Orozco", "Vanesa Martín", "Ferrán Adrià", "David Villa", "Severiano Ballesteros", "Fernando Alonso", "Jorge Lorenzo"
-  ],
-  Espacio: [
-    "Planetas","Estrellas","Agujeros negros","Cometas","Nebulosas","Galaxias","Astronautas","Telescopios","Meteoritos","Constelaciones",
-    "Satélites","Exploración espacial","Estación Espacial","Rovers","Exoplanetas","Supernovas","Agujeros de gusano","Materia oscura","Cinturón de asteroides","Vía Láctea",
-    "Sistema Solar","Meteoros","Lunas","Asteroides","Cosmología","Física Espacial","Nebulosas Planetarias","Radiotelescopios","Microgravedad","Auroras Boreales",
-    "Eclipses","Exploración Lunar","Marte","Júpiter","Saturno","Plutón","Venus","Mercurio","Urano","Neptuno"
-  ],
-  Fantasía: [
-    "Dragones","Elfos","Orcos","Magos","Hadas","Vampiros","Zombies","Fénix","Unicornios","Sirenas",
-    "Gigantes","Enanos","Brujas","Demonios","Ángeles","Fantasma","Licántropos","Hobbits","Goblins","Genios",
-    "Espadas mágicas","Amuletos","Pociones","Hechizos","Runas","Trolls","Gárgolas","Elementales","Criaturas Mágicas","Caballeros",
-    "Reinos Fantásticos","Castillos Encantados","Artefactos Legendarios","Círculos Mágicos","Dragones de fuego","Elfos Oscuros","Fantasmas del Bosque","Hechiceros","Sátiros","Sirenas Malvadas"
-  ],
-  Historia: [
-    "Egipto","Roma","Grecia","Mesopotamia","Edad Media","Renacimiento","Revolución Francesa","Guerras Mundiales","Imperio Bizantino","Vikingos",
-    "Incas","Mayas","Aztecas","China Antigua","Japón Feudal","Genghis Khan","Napoleón","Hitler","Lincoln","George Washington",
-    "Alejandro Magno","Carlomagno","Juana de Arco","Cleopatra","Julio César","Leonardo da Vinci","Cristóbal Colón","Magallanes","Simón Bolívar","Napoleón Bonaparte",
-    "Revolución Industrial","Revolución Rusa","Guerras Napoleónicas","Edad Moderna","Edad Contemporánea","Imperio Otomano","Imperio Español","Reino Unido Victoriano","Imperio Alemán","Imperio Ruso"
-  ],
-  Literatura: [
-    "Cien Años de Soledad","Don Quijote","Hamlet","Romeo y Julieta","Moby Dick","Orgullo y Prejuicio","El Principito","La Divina Comedia","Sherlock Holmes","Harry Potter",
-    "Percy Jackson","El Hobbit","El Señor de los Anillos","Juego de Tronos","Crónica de una Muerte Anunciada","La Sombra del Viento","Los Pilares de la Tierra","Drácula","Frankenstein","El Código Da Vinci",
-    "Ana Karenina","Guerra y Paz","Fahrenheit 451","1984","El Gran Gatsby","Lolita","El Retrato de Dorian Gray","Cumbres Borrascosas","El Amor en los Tiempos del Cólera","Rayuela",
-    "La Ciudad y los Perros","Pedro Páramo","La Casa de los Espíritus","Los Detectives Salvajes","El Laberinto de los Espíritus","Requiem por un Campesino Español","Don Juan Tenorio","El Aleph","Veinte Mil Leguas de Viaje Submarino","La Metamorfosis"
-  ],
-  Aleatorio:[]
-};
+// ================= ELEMENTOS =================
+const numPlayersSelect = document.getElementById('numPlayersSelect');
+const playerNamesDiv = document.getElementById('playerNames');
+const numImpostorsInput = document.getElementById('numImpostors');
+const categorySelect = document.getElementById('categorySelect');
 
-// Llenar Aleatorio
-Object.keys(themes).forEach(cat=>{
-  if(cat!=="Aleatorio"){
-    themes[cat].forEach(t => themes.Aleatorio.push(t));
-  }
-});
+const startBtn = document.getElementById('startBtn');
+const nightBtn = document.getElementById('nightModeBtn');
 
+const setupDiv = document.getElementById('setup');
+const roleScreen = document.getElementById('roleScreen');
+const turnText = document.getElementById('turnText');
+
+const flipCard = document.getElementById('flipCard');
+const flipInner = document.getElementById('flipInner');
+const roleDisplay = document.getElementById('roleDisplay');
+
+const showRoleBtn = document.getElementById('showRoleBtn');
+const nextBtn = document.getElementById('nextBtn');
+const endBtn = document.getElementById('endBtn');
+
+const summaryScreen = document.getElementById('summaryScreen');
+const summaryList = document.getElementById('summaryList');
+
+// ================= JUGADORES =================
 let players = [];
 let currentIndex = 0;
 let currentTheme = "";
 
-const numImpostorsInput=document.getElementById('numImpostors');
-const startBtn=document.getElementById('startBtn');
-const setupDiv=document.getElementById('setup');
-const roleScreen=document.getElementById('roleScreen');
-const turnText=document.getElementById('turnText');
-const roleDisplay=document.getElementById('roleDisplay');
-const showRoleBtn=document.getElementById('showRoleBtn');
-const nextBtn=document.getElementById('nextBtn');
-const endBtn=document.getElementById('endBtn');
-const summaryScreen=document.getElementById('summaryScreen');
-const summaryList=document.getElementById('summaryList');
-const customThemeInput=document.getElementById('customThemeInput');
+// ================= TEMAS =================
+const themes = {
+  Deportes:["Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación"],
+  Música:["Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica"],
+  Series:["Breaking Bad","La Casa de Papel","Stranger Things","Friends"],
+  Videojuegos:["Fortnite","Minecraft","Call of Duty","GTA","FIFA"],
+  Películas:["Harry Potter","Star Wars","Avatar","Indiana Jones"],
+  Animales:["Águilas","Leones","Tiburones","Gatos"],
+  Aleatorio:[]
+};
+Object.keys(themes).forEach(t => {
+  if(t !== "Aleatorio") themes[t].forEach(x => themes.Aleatorio.push(x));
+});
 
-startBtn.addEventListener('click', ()=>{
+// ================= GENERAR SELECT JUGADORES =================
+for(let i=3;i<=20;i++){
+  const op=document.createElement("option");
+  op.value=i;
+  op.textContent=i+" jugadores";
+  numPlayersSelect.appendChild(op);
+}
+generateInputs();
+
+numPlayersSelect.addEventListener("change", generateInputs);
+
+function generateInputs(){
+  playerNamesDiv.innerHTML="";
+  for(let i=0;i<numPlayersSelect.value;i++){
+    playerNamesDiv.innerHTML += `
+      <div class="player-card">
+        <input type="text" id="player${i}" placeholder="Jugador ${i+1}">
+      </div>`;
+  }
+}
+
+// ================= EMPEZAR =================
+startBtn.addEventListener("click", ()=>{
   const numPlayers = parseInt(numPlayersSelect.value);
   const numImpostors = parseInt(numImpostorsInput.value);
+
   if(numImpostors >= numPlayers){
-    alert("Los impostores no pueden ser iguales o más que los jugadores");
+    alert("Demasiados impostores");
     return;
   }
 
   // Crear jugadores
-  players=[];
+  players = [];
   for(let i=0;i<numPlayers;i++){
-    const name = document.getElementById('player'+i).value.trim() || 'Jugador '+(i+1);
+    const name = document.getElementById("player"+i).value.trim() || `Jugador ${i+1}`;
     players.push({name,isImpostor:false,theme:""});
   }
 
-  // Mezclar jugadores
-  players=players.sort(()=>Math.random()-0.5);
+  // Mezclar
+  players.sort(()=>Math.random() - 0.5);
 
   // Asignar impostores
-  let impostorsAssigned=0;
-  while(impostorsAssigned<numImpostors){
-    const idx=Math.floor(Math.random()*players.length);
-    if(!players[idx].isImpostor){
-      players[idx].isImpostor=true;
-      impostorsAssigned++;
+  let imp=0;
+  while(imp<numImpostors){
+    let r=Math.floor(Math.random()*players.length);
+    if(!players[r].isImpostor){
+      players[r].isImpostor=true;
+      imp++;
     }
   }
 
-  // Elegir tema ciudadano
-  const category=categorySelect.value;
-  if(category==="Personalizado"){
-    const val=customThemeInput.value.trim();
-    if(!val){ alert("Escribe un tema personalizado"); return; }
-    currentTheme=val;
-  } else {
-    let categoryThemes=themes[category];
-    if(category==="Aleatorio") categoryThemes=themes.Aleatorio;
-    currentTheme=categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
-  }
-  players.forEach(p=>{ if(!p.isImpostor) p.theme=currentTheme; });
+  // Tema
+  const category = categorySelect.value;
+  const list = themes[category];
+  currentTheme = list[Math.floor(Math.random()*list.length)];
 
-  setupDiv.style.display='none';
-  roleScreen.style.display='block';
+  players.forEach(p=>{
+    if(!p.isImpostor) p.theme=currentTheme;
+  });
+
+  // Cambiar pantalla
+  setupDiv.style.display="none";
+  roleScreen.style.display="block";
   currentIndex=0;
   updateTurn();
 });
 
-// Actualizar turno
+// ================= MOSTRAR ROL =================
+showRoleBtn.addEventListener("click", ()=>{
+  const p = players[currentIndex];
+  roleDisplay.innerText = p.isImpostor ? "IMPOSTOR" : p.theme;
+  flipCard.classList.add("flip");
+  showRoleBtn.style.display="none";
+  nextBtn.style.display="block";
+});
+
+// ================= SIGUIENTE =================
+nextBtn.addEventListener("click", ()=>{
+  flipCard.classList.remove("flip");
+  showRoleBtn.style.display="block";
+  nextBtn.style.display="none";
+
+  currentIndex++;
+  if(currentIndex < players.length){
+    updateTurn();
+  } else {
+    showSummary();
+  }
+});
+
 function updateTurn(){
-  roleDisplay.style.display='none';
-  roleDisplay.classList.remove('show');
-  nextBtn.style.display='none';
-  showRoleBtn.style.display='inline';
-  turnText.innerText='Turno de '+players[currentIndex].name;
+  turnText.innerText = "Turno de " + players[currentIndex].name;
 }
 
-// Mostrar rol
-showRoleBtn.addEventListener('click', ()=>{
-  const player=players[currentIndex];
-  roleDisplay.style.display='block';
-  roleDisplay.classList.remove('show');
-  setTimeout(()=>{
-    roleDisplay.innerText=player.isImpostor ? 'IMPOSTOR' : 'Tu tema: '+player.theme;
-    roleDisplay.classList.add('show');
-  },50);
-  showRoleBtn.style.display='none';
-  nextBtn.style.display='inline';
-});
-
-// Siguiente jugador
-nextBtn.addEventListener('click', ()=>{
-  currentIndex++;
-  if(currentIndex<players.length) updateTurn();
-  else showSummary();
-});
-
-// Resumen
+// ================= RESUMEN =================
 function showSummary(){
-  roleScreen.style.display='none';
-  summaryScreen.style.display='block';
-  summaryList.innerHTML='';
+  roleScreen.style.display="none";
+  summaryScreen.style.display="block";
+
+  summaryList.innerHTML="";
   players.forEach(p=>{
-    const li=document.createElement('li');
-    li.innerText=p.name+' - '+(p.isImpostor?'IMPOSTOR':p.theme);
-    if(p.isImpostor) li.style.color='red';
+    const li=document.createElement("li");
+    li.innerText = p.name + " - " + (p.isImpostor?"IMPOSTOR":p.theme);
+    if(p.isImpostor) li.style.color="red";
     summaryList.appendChild(li);
   });
 }
 
-// Terminar partida
-endBtn.addEventListener('click', ()=>location.reload());
-</script>
+// ================= MODO NOCHE =================
+nightBtn.addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+
+  // Guardar en localStorage
+  localStorage.setItem("nightMode",
+    document.body.classList.contains("dark") ? "1" : "0"
+  );
+});
+
+// Aplicar modo guardado
+if(localStorage.getItem("nightMode")==="1"){
+  document.body.classList.add("dark");
+}
