@@ -100,9 +100,9 @@ const themes = {
   Aleatorio:[]
 };
 
-// Llenar Aleatorio con todos los demás temas
+// Llenar Aleatorio
 Object.keys(themes).forEach(cat=>{
-  if(cat !== "Aleatorio"){
+  if(cat!=="Aleatorio"){
     themes[cat].forEach(t => themes.Aleatorio.push(t));
   }
 });
@@ -111,132 +111,108 @@ let players = [];
 let currentIndex = 0;
 let currentTheme = "";
 
-const numPlayersInput = document.getElementById('numPlayers');
-const numImpostorsInput = document.getElementById('numImpostors');
-const categorySelect = document.getElementById('categorySelect');
-const playerNamesDiv = document.getElementById('playerNames');
-const startBtn = document.getElementById('startBtn');
-const nightModeBtn = document.getElementById('nightModeBtn');
+const numImpostorsInput=document.getElementById('numImpostors');
+const startBtn=document.getElementById('startBtn');
+const setupDiv=document.getElementById('setup');
+const roleScreen=document.getElementById('roleScreen');
+const turnText=document.getElementById('turnText');
+const roleDisplay=document.getElementById('roleDisplay');
+const showRoleBtn=document.getElementById('showRoleBtn');
+const nextBtn=document.getElementById('nextBtn');
+const endBtn=document.getElementById('endBtn');
+const summaryScreen=document.getElementById('summaryScreen');
+const summaryList=document.getElementById('summaryList');
+const customThemeInput=document.getElementById('customThemeInput');
 
-const setupDiv = document.getElementById('setup');
-const roleScreen = document.getElementById('roleScreen');
-const turnText = document.getElementById('turnText');
-const showRoleBtn = document.getElementById('showRoleBtn');
-const roleDisplay = document.getElementById('roleDisplay');
-const nextBtn = document.getElementById('nextBtn');
-const endBtn = document.getElementById('endBtn');
-
-const summaryScreen = document.getElementById('summaryScreen');
-const summaryList = document.getElementById('summaryList');
-
-// Crear inputs de jugadores
-function createPlayerInputs() {
-  playerNamesDiv.innerHTML = '';
-  const num = parseInt(numPlayersInput.value);
-  for(let i=0; i<num; i++){
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = `Jugador ${i+1}`;
-    input.id = `player${i}`;
-    input.placeholder = `Nombre jugador ${i+1}`;
-    playerNamesDiv.appendChild(input);
-  }
-}
-createPlayerInputs();
-numPlayersInput.addEventListener('change', createPlayerInputs);
-
-// Modo noche
-nightModeBtn.addEventListener('click', ()=>{
-  document.body.classList.toggle('night');
-});
-
-// Empezar juego
 startBtn.addEventListener('click', ()=>{
-  const numPlayers = parseInt(numPlayersInput.value);
+  const numPlayers = parseInt(numPlayersSelect.value);
   const numImpostors = parseInt(numImpostorsInput.value);
   if(numImpostors >= numPlayers){
     alert("Los impostores no pueden ser iguales o más que los jugadores");
     return;
   }
 
-  players = [];
-  for(let i=0; i<numPlayers; i++){
-    const name = document.getElementById(`player${i}`).value.trim() || `Jugador ${i+1}`;
-    players.push({name, isImpostor: false, theme: ""});
+  // Crear jugadores
+  players=[];
+  for(let i=0;i<numPlayers;i++){
+    const name = document.getElementById('player'+i).value.trim() || 'Jugador '+(i+1);
+    players.push({name,isImpostor:false,theme:""});
   }
- // 👉 ORDEN ALEATORIO DE JUGADORES
-  players = players.sort(() => Math.random() - 0.5);
-  
+
+  // Mezclar jugadores
+  players=players.sort(()=>Math.random()-0.5);
+
   // Asignar impostores
-  let impostorsAssigned = 0;
-  while(impostorsAssigned < numImpostors){
-    const idx = Math.floor(Math.random()*players.length);
+  let impostorsAssigned=0;
+  while(impostorsAssigned<numImpostors){
+    const idx=Math.floor(Math.random()*players.length);
     if(!players[idx].isImpostor){
-      players[idx].isImpostor = true;
+      players[idx].isImpostor=true;
       impostorsAssigned++;
     }
   }
 
-  // Elegir tema único para ciudadanos
-  const category = categorySelect.value;
-  let citizenTheme = "";
-
-  if(category === "Personalizado"){
-    const customTheme = document.getElementById('customThemeInput').value.trim();
-    if(customTheme === ""){
-      alert("Debes escribir un tema personalizado");
-      return;
-    }
-    citizenTheme = customTheme;
+  // Elegir tema ciudadano
+  const category=categorySelect.value;
+  if(category==="Personalizado"){
+    const val=customThemeInput.value.trim();
+    if(!val){ alert("Escribe un tema personalizado"); return; }
+    currentTheme=val;
   } else {
-    let categoryThemes = themes[category];
-    if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
-    citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
+    let categoryThemes=themes[category];
+    if(category==="Aleatorio") categoryThemes=themes.Aleatorio;
+    currentTheme=categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
   }
+  players.forEach(p=>{ if(!p.isImpostor) p.theme=currentTheme; });
 
-  currentTheme = citizenTheme;
-  players.forEach(p=>{ if(!p.isImpostor) p.theme = citizenTheme; });
-
-  setupDiv.style.display = 'none';
-  roleScreen.style.display = 'block';
-  currentIndex = 0;
+  setupDiv.style.display='none';
+  roleScreen.style.display='block';
+  currentIndex=0;
   updateTurn();
 });
 
 // Actualizar turno
 function updateTurn(){
-  roleDisplay.style.display = 'none';
+  roleDisplay.style.display='none';
   roleDisplay.classList.remove('show');
-  nextBtn.style.display = 'none';
-  showRoleBtn.style.display = 'inline';
-  turnText.innerText = `Turno de ${players[currentIndex].name}`;
+  nextBtn.style.display='none';
+  showRoleBtn.style.display='inline';
+  turnText.innerText='Turno de '+players[currentIndex].name;
 }
 
-// Mostrar rol con transición
+// Mostrar rol
 showRoleBtn.addEventListener('click', ()=>{
-  const player = players[currentIndex];
-  roleDisplay.style.display = 'block';
+  const player=players[currentIndex];
+  roleDisplay.style.display='block';
   roleDisplay.classList.remove('show');
   setTimeout(()=>{
-    roleDisplay.innerText = player.isImpostor ? 'IMPOSTOR' : `Tu tema: ${player.theme}`;
+    roleDisplay.innerText=player.isImpostor ? 'IMPOSTOR' : 'Tu tema: '+player.theme;
     roleDisplay.classList.add('show');
-  }, 50);
-  showRoleBtn.style.display = 'none';
-  nextBtn.style.display = 'inline';
+  },50);
+  showRoleBtn.style.display='none';
+  nextBtn.style.display='inline';
 });
 
 // Siguiente jugador
 nextBtn.addEventListener('click', ()=>{
   currentIndex++;
-  if(currentIndex < players.length){
-    updateTurn();
-  } else {
-    showSummary();
-  }
+  if(currentIndex<players.length) updateTurn();
+  else showSummary();
 });
 
-// Mostrar resumen
+// Resumen
 function showSummary(){
-  roleScreen.style.display = 'none';
-  summaryScreen.style.display = 'block';
-  summary
+  roleScreen.style.display='none';
+  summaryScreen.style.display='block';
+  summaryList.innerHTML='';
+  players.forEach(p=>{
+    const li=document.createElement('li');
+    li.innerText=p.name+' - '+(p.isImpostor?'IMPOSTOR':p.theme);
+    if(p.isImpostor) li.style.color='red';
+    summaryList.appendChild(li);
+  });
+}
+
+// Terminar partida
+endBtn.addEventListener('click', ()=>location.reload());
+</script>
