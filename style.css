@@ -1,197 +1,171 @@
-/* ====================== */
-/*       ESTILOS BASE      */
-/* ====================== */
-
+/* --- RESET Y BODY --- */
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f2f5;
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  background: #f2f2f2;
-  color: #333;
   transition: background 0.3s, color 0.3s;
 }
 
-h1, h2 {
-  text-align: center;
-  margin-bottom: 15px;
+body.night {
+  background: #1a1a1a;
+  color: #eee;
 }
 
-/* Contenedor general de pantallas */
-.screen {
-  max-width: 450px;
-  margin: 0 auto;
-  padding: 20px;
+/* --- CONTENEDOR PRINCIPAL --- */
+.container {
+  max-width: 500px;
+  margin: 40px auto;
   text-align: center;
+  padding: 0 15px;
 }
 
-/* Inputs y selects */
+/* --- ICONO --- */
+.container img {
+  width: 100px;
+  margin-bottom: 20px;
+  transition: transform 0.3s;
+}
+.container img:hover {
+  transform: rotate(-10deg) scale(1.05);
+}
+
+/* --- TARJETAS --- */
+.card {
+  background: #fff;
+  padding: 25px 20px;
+  margin-bottom: 25px;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+body.night .card {
+  background: #2c2c2c;
+  color: #eee;
+}
+
+/* --- LABELS E INPUTS --- */
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: left;
+  font-size: 16px;
+}
+
 input, select {
-  width: 90%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 16px;
-  box-sizing: border-box;
-  transition: transform 0.2s, border-color 0.2s;
+  outline: none;
+  transition: 0.3s;
 }
 
 input:focus, select:focus {
-  border-color: #007bff;
-  transform: scale(1.02);
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76,175,80,0.5);
 }
 
-/* Botones */
+/* --- BOTONES --- */
 button {
-  width: 90%;
-  padding: 12px;
-  margin-top: 12px;
-  background: #007bff;
+  padding: 12px 25px;
+  margin: 10px 5px 0 5px;
   border: none;
-  border-radius: 10px;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.2s;
-}
-
-button:hover {
-  background: #005fcc;
-  transform: scale(1.03);
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-/* Botón modo noche */
-#nightModeBtn {
-  width: auto;
-  padding: 8px 15px;
-  font-size: 14px;
-  background: #333;
-  margin-bottom: 10px;
-}
-
-#nightModeBtn:hover {
-  background: black;
-}
-
-/* Lista de inputs de jugadores */
-#playerNames input {
-  margin-bottom: 10px;
-}
-
-/* ====================== */
-/*     MODO DE NOCHE       */
-/* ====================== */
-
-body.night {
-  background: #111;
-  color: #f7f7f7;
-}
-
-body.night input,
-body.night select {
-  background: #222;
-  color: #eee;
-  border-color: #555;
-}
-
-body.night button {
-  background: #444;
-}
-
-body.night button:hover {
-  background: #222;
-}
-
-/* ====================== */
-/*   PANTALLA DE ROLES     */
-/* ====================== */
-
-#roleDisplay {
-  margin-top: 20px;
-  padding: 20px;
-  font-size: 22px;
-  font-weight: bold;
   border-radius: 12px;
-  background: #fff;
-  display: none;
-  transition: opacity 0.4s ease, transform 0.3s ease;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.main-btn {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.main-btn:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.secondary-btn {
+  background: #2196F3;
+  color: #fff;
+}
+
+.secondary-btn:hover {
+  background: #1e88e5;
+  transform: scale(1.05);
+}
+
+.red-btn {
+  background: #f44336;
+  color: #fff;
+}
+
+.red-btn:hover {
+  background: #da190b;
+  transform: scale(1.05);
+}
+
+/* --- ROLE DISPLAY --- */
+#roleDisplay {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 12px;
+  background: #eee;
+  font-size: 18px;
+  font-weight: bold;
+  min-height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
   opacity: 0;
-  transform: translateY(10px);
+}
+
+body.night #roleDisplay {
+  background: #444;
+  color: #fff;
 }
 
 #roleDisplay.show {
   opacity: 1;
-  transform: translateY(0px);
+  transition: opacity 0.5s;
 }
 
-/* ====================== */
-/*     RESUMEN FINAL       */
-/* ====================== */
-
+/* --- LISTA RESUMEN --- */
 #summaryList {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 #summaryList li {
-  background: #eaeaea;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  font-size: 18px;
-  transition: transform 0.2s;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: background 0.3s;
 }
 
-#summaryList li:hover {
-  transform: scale(1.02);
-}
-
-/* Impostores */
-.impostor {
-  background: #ff4d4d !important;
-  color: white;
+#summaryList li.impostor {
+  background: #ffcccc;
   font-weight: bold;
 }
 
-/* ====================== */
-/*   ANIMACIONES BONITAS   */
-/* ====================== */
-
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+body.night #summaryList li {
+  border-color: #555;
 }
 
-.slide-up {
-  animation: slideUp 0.5s ease forwards;
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(25px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ====================== */
-/*    RESPONSIVE MÓVIL     */
-/* ====================== */
-
-@media (max-width: 480px) {
-  .screen {
-    padding: 15px;
-  }
-
-  button, input, select {
-    font-size: 16px;
-  }
-
-  #roleDisplay {
-    font-size: 20px;
-  }
+body.night #summaryList li.impostor {
+  background: #aa3333;
+  color: #fff;
 }
