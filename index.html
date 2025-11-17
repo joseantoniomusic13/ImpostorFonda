@@ -1,144 +1,303 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego del Impostor</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Juego del Impostor - Corregido</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    margin:0; padding:0;
-    transition: background 0.3s, color 0.3s;
-  }
-  body.night {
-    background: #222;
-    color: #eee;
-  }
-  .container {
-    max-width: 500px;
-    margin: 30px auto;
-    text-align: center;
-  }
-  .card {
-    background: #fff;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transition: background 0.3s, color 0.3s;
-  }
-  body.night .card { background: #333; color: #eee; }
-  label { display:block; margin-top:10px; font-weight:bold; text-align:left; }
-  input, select { width: 100%; padding:8px; margin-top:5px; border-radius:8px; border:1px solid #ccc; font-size:16px; }
-  .player-card { margin:5px 0; }
-  button {
-    padding:10px 20px; margin:10px 5px 0 5px; border:none; border-radius:8px; font-size:16px; cursor:pointer;
-    transition: 0.2s;
-  }
-  .main-btn { background:#4CAF50; color:white; }
-  .main-btn:hover { background:#45a049; }
-  .secondary-btn { background:#2196F3; color:white; }
-  .secondary-btn:hover { background:#1e88e5; }
-  .red-btn { background:#f44336; color:white; }
-  .red-btn:hover { background:#da190b; }
-  #roleDisplay { margin:15px 0; padding:10px; border-radius:10px; background:#eee; font-size:18px; transition: background 0.3s; }
-  body.night #roleDisplay { background:#555; color:white; }
+  body{font-family:Arial,Helvetica,sans-serif;background:#f7f7f7;margin:0;padding:18px;transition:background .25s,color .25s}
+  body.night{background:#121212;color:#eee}
+  .container{max-width:600px;margin:20px auto;text-align:center}
+  .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:16px}
+  body.night .card{background:#222;color:#eee}
+  label{display:block;text-align:left;margin-top:12px;font-weight:700}
+  input,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:15px}
+  .player-card{margin:6px 0}
+  .controls{display:flex;gap:8px;align-items:center}
+  .controls button{flex:1;padding:10px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+  .main-btn{background:#28a745;color:#fff}
+  .secondary-btn{background:#0d6efd;color:#fff}
+  .red-btn{background:#dc3545;color:#fff}
+  #roleDisplay{margin:14px 0;padding:12px;border-radius:10px;background:#efefef;font-size:18px}
+  body.night #roleDisplay{background:#333;color:#fff}
+  ul{text-align:left;padding-left:20px}
+  .hint{font-size:13px;color:#666;margin-top:8px;text-align:left}
+  .small{font-size:13px;color:#666}
 </style>
 </head>
 <body>
-<div class="container">
-  <img src="icon.png" alt="Icono Juego" style="width:80px; margin-bottom:15px;">
+  <div class="container">
+    <div class="card" id="setup">
+      <h1>Juego del Impostor</h1>
+      <h3 class="small">Hecho por Jose Antonio</h3>
 
-  <!-- Setup -->
-  <div id="setup" class="card">
-    <h1>Juego del Impostor</h1>
-    <h2>Hecho por Jose Antonio</h2>
+      <label for="numPlayersSelect">Jugadores:</label>
+      <select id="numPlayersSelect" aria-label="Número de jugadores"></select>
 
-    <label>Jugadores:</label>
-    <select id="numPlayersSelect"></select>
-    <div id="playerNames"></div>
+      <div id="playerNames" style="margin-top:10px"></div>
 
-    <label>Impostores:</label>
-    <input type="number" id="numImpostors" min="1" max="3" value="1">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="flex:1">
+          <label for="numImpostors">Impostores:</label>
+          <input id="numImpostors" type="number" min="1" max="10" value="1">
+        </div>
+        <div style="flex:1">
+          <label for="categorySelect">Categoría:</label>
+          <select id="categorySelect">
+            <option value="Deportes">Deportes</option>
+            <option value="Música">Música</option>
+            <option value="Series">Series</option>
+            <option value="Videojuegos">Videojuegos</option>
+            <option value="Películas">Películas</option>
+            <option value="Animales">Animales</option>
+            <option value="Famosos">Famosos</option>
+            <option value="Aleatorio">Aleatorio</option>
+            <option value="Personalizado">Escribir tema</option>
+          </select>
+        </div>
+      </div>
 
-    <label>Categoría:</label>
-    <select id="categorySelect">
-      <option value="Deportes">Deportes</option>
-      <option value="Música">Música</option>
-      <option value="Series">Series</option>
-      <option value="Videojuegos">Videojuegos</option>
-      <option value="Películas">Películas</option>
-      <option value="Animales">Animales</option>
-      <option value="Aleatorio">Aleatorio</option>
-      <option value="Personalizado">Personalizado</option>
-    </select>
+      <div id="customThemeDiv" style="display:none;margin-top:10px">
+        <label for="customThemeInput">Escribe tu tema:</label>
+        <input id="customThemeInput" type="text" placeholder="Tema personalizado (ej. Frutas raras)">
+      </div>
 
-    <div id="customThemeDiv" style="display:none;">
-      <label>Escribe tu tema:</label>
-      <input type="text" id="customThemeInput" placeholder="Personalizado">
+      <div class="controls" style="margin-top:12px">
+        <button id="startBtn" class="main-btn">Empezar Juego</button>
+        <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
+      </div>
+
+      <p class="hint">Si dejas los nombres vacíos se asignará "Jugador X". Asegúrate de poner el número correcto de jugadores antes de empezar.</p>
     </div>
 
-    <button id="startBtn" class="main-btn">Empezar Juego</button>
-    <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
-  </div>
+    <div class="card" id="roleScreen" style="display:none">
+      <h2 id="turnText">Turno</h2>
+      <div id="roleDisplay" aria-live="polite"></div>
 
-  <!-- Rol -->
-  <div id="roleScreen" class="card" style="display:none;">
-    <h2 id="turnText"></h2>
-    <div id="roleDisplay"></div>
-    <button id="showRoleBtn" class="main-btn">Mostrar Rol</button>
-    <button id="nextBtn" class="secondary-btn" style="display:none;">Siguiente Jugador</button>
-    <button id="endBtn" class="red-btn">Terminar Partida</button>
-  </div>
+      <div class="controls" style="margin-top:8px">
+        <button id="showRoleBtn" class="main-btn">Mostrar Rol</button>
+        <button id="nextBtn" class="secondary-btn" style="display:none">Siguiente Jugador</button>
+        <button id="endBtn" class="red-btn">Terminar Partida</button>
+      </div>
+    </div>
 
-  <!-- Resumen -->
-  <div id="summaryScreen" class="card" style="display:none;">
-    <h2>Resumen de la Partida</h2>
-    <ul id="summaryList"></ul>
-    <button id="endBtnSummary" class="red-btn" onclick="location.reload()">Reiniciar</button>
+    <div class="card" id="summaryScreen" style="display:none">
+      <h2>Resumen de la Partida</h2>
+      <ul id="summaryList"></ul>
+      <div class="controls">
+        <button id="restartBtn" class="red-btn">Reiniciar</button>
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
-  // Número de jugadores
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  // ---------- Temas (igual que el tuyo) ----------
+  const themes = {
+    Deportes:[ "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf" ],
+    Música:[ "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Jazz","Hip-Hop","Blues","Salsa" ],
+    Series:[ "Breaking Bad","La Casa de Papel","Stranger Things","Friends","The Office" ],
+    Videojuegos:[ "Fortnite","Minecraft","Call of Duty","GTA","FIFA","Zelda","Mario Bros","Pokémon","Among Us" ],
+    Películas:[ "Harry Potter","Star Wars","Avatar","Jurassic Park","El Señor de los Anillos" ],
+    Animales:[ "Gatos","Perros","Tiburones","Leones","Elefantes" ],
+    Famosos:[ "Cristiano Ronaldo","Lionel Messi","Shakira","Beyoncé","Taylor Swift" ],
+    Aleatorio:[]
+  };
+  Object.keys(themes).forEach(k => { if(k!=='Aleatorio') themes.Aleatorio.push(...themes[k]) });
+
+  // ---------- Elementos ----------
   const numPlayersSelect = document.getElementById('numPlayersSelect');
   const playerNamesDiv = document.getElementById('playerNames');
-  for(let i=3;i<=20;i++){
-    const option = document.createElement('option');
-    option.value=i; option.text=i+" jugadores";
-    numPlayersSelect.appendChild(option);
-  }
+  const numImpostorsInput = document.getElementById('numImpostors');
+  const categorySelect = document.getElementById('categorySelect');
+  const customThemeDiv = document.getElementById('customThemeDiv');
+  const customThemeInput = document.getElementById('customThemeInput');
 
+  const startBtn = document.getElementById('startBtn');
+  const nightModeBtn = document.getElementById('nightModeBtn');
+
+  const setupDiv = document.getElementById('setup');
+  const roleScreen = document.getElementById('roleScreen');
+  const turnText = document.getElementById('turnText');
+  const roleDisplay = document.getElementById('roleDisplay');
+  const showRoleBtn = document.getElementById('showRoleBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const endBtn = document.getElementById('endBtn');
+
+  const summaryScreen = document.getElementById('summaryScreen');
+  const summaryList = document.getElementById('summaryList');
+  const restartBtn = document.getElementById('restartBtn');
+
+  // ---------- Rellenar select de jugadores (3..20 por defecto) ----------
+  for(let i=3;i<=20;i++){
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i + " jugadores";
+    numPlayersSelect.appendChild(opt);
+  }
+  // dejar valor por defecto 6 si quieres (opcional)
+  numPlayersSelect.value = 6;
+
+  // ---------- Función para crear inputs ----------
   function createPlayerInputs(){
-    playerNamesDiv.innerHTML='';
-    const num=parseInt(numPlayersSelect.value);
-    for(let i=0;i<num;i++){
-      const div=document.createElement('div');
-      div.classList.add('player-card');
-      const input=document.createElement('input');
-      input.type='text'; input.placeholder='Nombre Jugador '+(i+1);
-      input.id='player'+i;
-      div.appendChild(input);
-      playerNamesDiv.appendChild(div);
+    playerNamesDiv.innerHTML = '';
+    const n = parseInt(numPlayersSelect.value) || 6;
+    for(let i=0;i<n;i++){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'player-card';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'player' + i;
+      input.placeholder = 'Jugador ' + (i+1);
+      wrapper.appendChild(input);
+      playerNamesDiv.appendChild(wrapper);
     }
   }
-  numPlayersSelect.addEventListener('change', createPlayerInputs);
+  // inicial
   createPlayerInputs();
+  numPlayersSelect.addEventListener('change', createPlayerInputs);
 
-  // Mostrar input personalizado
-  const categorySelect=document.getElementById('categorySelect');
-  const customThemeDiv=document.getElementById('customThemeDiv');
+  // ---------- Mostrar campo personalizado si corresponde ----------
   categorySelect.addEventListener('change', ()=>{
-    if(categorySelect.value==='Personalizado') customThemeDiv.style.display='block';
-    else customThemeDiv.style.display='none';
+    if(categorySelect.value === 'Personalizado'){
+      customThemeDiv.style.display = 'block';
+    } else {
+      customThemeDiv.style.display = 'none';
+    }
   });
 
-  // Modo noche
-  const nightModeBtn=document.getElementById('nightModeBtn');
-  nightModeBtn.addEventListener('click',()=>document.body.classList.toggle('night'));
+  // ---------- Modo noche ----------
+  nightModeBtn.addEventListener('click', ()=> document.body.classList.toggle('night'));
+
+  // ---------- Lógica del juego ----------
+  let players = [];
+  let currentIndex = 0;
+  let currentTheme = '';
+
+  startBtn.addEventListener('click', ()=> {
+    try {
+      // comprobar número jugadores
+      const numPlayers = parseInt(numPlayersSelect.value);
+      if(isNaN(numPlayers) || numPlayers < 1){
+        alert('Selecciona un número válido de jugadores.');
+        return;
+      }
+
+      const numImpostors = parseInt(numImpostorsInput.value) || 1;
+      if(numImpostors < 1){
+        alert('El número de impostores debe ser como mínimo 1.');
+        return;
+      }
+      if(numImpostors >= numPlayers){
+        alert('Los impostores no pueden ser iguales o más que los jugadores.');
+        return;
+      }
+
+      // crear jugadores (leer inputs). Si están vacíos, pongo "Jugador X" automáticamente.
+      players = [];
+      for(let i=0;i<numPlayers;i++){
+        const el = document.getElementById('player'+i);
+        const name = (el && el.value && el.value.trim()) ? el.value.trim() : `Jugador ${i+1}`;
+        players.push({ name, isImpostor: false, theme: '' });
+      }
+
+      // mezclar jugadores (aleatorio)
+      players.sort(()=> Math.random() - 0.5);
+
+      // asignar impostores al azar
+      let assigned = 0;
+      while(assigned < numImpostors){
+        const idx = Math.floor(Math.random() * players.length);
+        if(!players[idx].isImpostor){
+          players[idx].isImpostor = true;
+          assigned++;
+        }
+      }
+
+      // seleccionar tema
+      let category = categorySelect.value;
+      if(category === 'Personalizado'){
+        const val = (customThemeInput.value || '').trim();
+        if(!val){
+          alert('Escribe un tema personalizado o elige otra categoría.');
+          return;
+        }
+        currentTheme = val;
+      } else {
+        const list = themes[category] || themes.Aleatorio;
+        currentTheme = list[Math.floor(Math.random() * list.length)];
+      }
+      // aplicar tema a ciudadanos
+      players.forEach(p => { if(!p.isImpostor) p.theme = currentTheme });
+
+      // pasar a pantalla de roles
+      setupDiv.style.display = 'none';
+      roleScreen.style.display = 'block';
+      currentIndex = 0;
+      updateTurn();
+      console.log('Partida iniciada', { numPlayers, numImpostors, currentTheme, players });
+    } catch (err){
+      console.error('Error al empezar partida:', err);
+      alert('Ha ocurrido un error. Mira la consola (F12) y pégame el error si sigue sin ir.');
+    }
+  });
+
+  function updateTurn(){
+    if(!players || players.length === 0){
+      alert('No hay jugadores. Reinicia la página.');
+      return;
+    }
+    // ocultar rol hasta que se muestre
+    roleDisplay.style.display = 'none';
+    roleDisplay.classList.remove('show');
+    showRoleBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'none';
+    turnText.innerText = `Turno de ${players[currentIndex].name}`;
+  }
+
+  showRoleBtn.addEventListener('click', ()=>{
+    const p = players[currentIndex];
+    roleDisplay.style.display = 'block';
+    roleDisplay.classList.remove('show');
+    // pequeña animación con timeout para simular efecto
+    setTimeout(()=> {
+      roleDisplay.innerText = p.isImpostor ? 'IMPOSTOR' : `Tu tema: ${p.theme}`;
+      roleDisplay.classList.add('show');
+    }, 60);
+    showRoleBtn.style.display = 'none';
+    nextBtn.style.display = 'inline-block';
+  });
+
+  nextBtn.addEventListener('click', ()=>{
+    currentIndex++;
+    if(currentIndex < players.length){
+      updateTurn();
+      // scroll arriba para móviles
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      showSummary();
+    }
+  });
+
+  function showSummary(){
+    roleScreen.style.display = 'none';
+    summaryScreen.style.display = 'block';
+    summaryList.innerHTML = '';
+    players.forEach(p=>{
+      const li = document.createElement('li');
+      li.textContent = `${p.name} — ${p.isImpostor ? 'IMPOSTOR' : p.theme}`;
+      if(p.isImpostor) li.style.color = '#c82333';
+      summaryList.appendChild(li);
+    });
+  }
+
+  endBtn.addEventListener('click', ()=> location.reload());
+  restartBtn.addEventListener('click', ()=> location.reload());
+
+  // DEBUG: si algo no funciona, se verá en consola.
+  console.log('%c Script cargado: Juego del Impostor (corregido)', 'color:green;font-weight:700');
+});
 </script>
 </body>
 </html>
-
-
