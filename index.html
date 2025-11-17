@@ -5,6 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juego del Impostor</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      text-align: center;
+    }
+    .game-icon {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    select, input[type="text"], select[name="numPlayersSelect"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .player-card {
+      background: #f9f9f9;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+    .main-btn, .secondary-btn, .red-btn {
+      padding: 10px 20px;
+      margin: 10px 5px 0 5px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .main-btn { background: #4CAF50; color: white; }
+    .main-btn:hover { background: #45a049; }
+    .secondary-btn { background: #2196F3; color: white; }
+    .secondary-btn:hover { background: #1e88e5; }
+    .red-btn { background: #f44336; color: white; }
+    .red-btn:hover { background: #da190b; }
+    #roleDisplay {
+      font-size: 20px;
+      margin: 20px 0;
+      padding: 15px;
+      background: #eee;
+      border-radius: 15px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -14,11 +81,17 @@
     <div id="setup" class="card">
       <h1>Juego del Impostor</h1>
       <h2>Hecho por Jose Antonio</h2>
-      <label>Jugadores:</label>
-      <input type="number" id="numPlayers" min="3" max="20" value="4">
+
+      <label>Número de jugadores:</label>
+      <select id="numPlayersSelect">
+        <!-- JS generará las opciones -->
+      </select>
+
       <div id="playerNames"></div>
+
       <label>Impostores:</label>
       <input type="number" id="numImpostors" min="1" max="3" value="1">
+
       <label>Categoría:</label>
       <select id="categorySelect">
         <option value="Deportes">Deportes</option>
@@ -36,6 +109,7 @@
         <option value="Animales">Animales</option>
         <option value="Aleatorio">Aleatorio</option>
       </select>
+
       <button id="startBtn" class="main-btn">Empezar Juego</button>
       <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
     </div>
@@ -57,9 +131,35 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const numPlayersSelect = document.getElementById('numPlayersSelect');
+    const playerNamesDiv = document.getElementById('playerNames');
+
+    // Llenar desplegable de número de jugadores
+    for(let i=3;i<=20;i++){
+      const option = document.createElement('option');
+      option.value = i;
+      option.text = i + " jugadores";
+      numPlayersSelect.appendChild(option);
+    }
+
+    function createPlayerInputs() {
+      playerNamesDiv.innerHTML = '';
+      const num = parseInt(numPlayersSelect.value);
+      for(let i=0;i<num;i++){
+        const div = document.createElement('div');
+        div.classList.add('player-card');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = "Nombre Jugador " + (i+1);
+        input.id = 'player' + i;
+        div.appendChild(input);
+        playerNamesDiv.appendChild(div);
+      }
+    }
+
+    numPlayersSelect.addEventListener('change', createPlayerInputs);
+    createPlayerInputs();
+  </script>
 </body>
 </html>
-
-
-
