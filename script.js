@@ -62,19 +62,17 @@ const themes = {
     "Croquetas","Gazpacho","Salmorejo","Arepas","Falafel","Tortilla Española","Baguette","Burrito","Dim Sum","Bruschetta",
     "Sándwiches","Café","Té","Chocolate caliente","Mousse","Fondue","Cevapcici","Yakitori","Kebab","Ramen"
   ],
-  Famosos : [
+  Famosos: [
     "Cristiano Ronaldo", "Lionel Messi", "LeBron James", "Michael Jordan", "Serena Williams", "Roger Federer", "Rafael Nadal",
-  "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Scarlett Johansson", "Will Smith", "Dwayne Johnson",
-  "Robert Downey Jr.", "Jennifer Lopez", "Shakira", "Beyoncé", "Taylor Swift", "Ariana Grande", "Kanye West", "Elon Musk",
-  "Bill Gates", "Oprah Winfrey", "Kim Kardashian", "Emma Watson", "Chris Hemsworth", "Gal Gadot", "Zendaya", "Harry Styles",
-  "Selena Gomez", "Justin Bieber", "Ed Sheeran", "Kylie Jenner", "Dua Lipa", "Drake", "Cardi B", "Rihanna", "Tom Hanks",
-  // Españoles
-  "Penélope Cruz", "Antonio Banderas", "Javier Bardem", "Salma Hayek", "Pablo Alborán", "Rosalía", "David Bisbal",
-  "Miguel Bosé", "Sergio Ramos", "Iker Casillas", "Fernando Torres", "Andrés Iniesta", "Pau Gasol", "Marc Gasol",
-  "Almodóvar", "Blanca Suárez", "Úrsula Corberó", "Pedro Alonso", "Álvaro Morte", "Mario Casas", "Elsa Pataky",
-  "Sara Carbonero", "Iker Casillas", "Alejandro Sanz", "Antonio Orozco", "Vanesa Martín", "Rafa Nadal", "Carla Suárez",
-  "Ferrán Adrià", "David Villa", "Severiano Ballesteros", "Fernando Alonso", "Jorge Lorenzo", "Penélope Cruz", "Rosalía"
-    ],
+    "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Scarlett Johansson", "Will Smith", "Dwayne Johnson",
+    "Robert Downey Jr.", "Jennifer Lopez", "Shakira", "Beyoncé", "Taylor Swift", "Ariana Grande", "Kanye West", "Elon Musk",
+    "Bill Gates", "Oprah Winfrey", "Kim Kardashian", "Emma Watson", "Chris Hemsworth", "Gal Gadot", "Zendaya", "Harry Styles",
+    "Selena Gomez", "Justin Bieber", "Ed Sheeran", "Kylie Jenner", "Dua Lipa", "Drake", "Cardi B", "Rihanna", "Tom Hanks",
+    "Penélope Cruz", "Antonio Banderas", "Javier Bardem", "Salma Hayek", "Pablo Alborán", "Rosalía", "David Bisbal",
+    "Miguel Bosé", "Sergio Ramos", "Iker Casillas", "Fernando Torres", "Andrés Iniesta", "Pau Gasol", "Marc Gasol",
+    "Almodóvar", "Blanca Suárez", "Úrsula Corberó", "Pedro Alonso", "Álvaro Morte", "Mario Casas", "Elsa Pataky",
+    "Sara Carbonero", "Alejandro Sanz", "Antonio Orozco", "Vanesa Martín", "Ferrán Adrià", "David Villa", "Severiano Ballesteros", "Fernando Alonso", "Jorge Lorenzo"
+  ],
   Espacio: [
     "Planetas","Estrellas","Agujeros negros","Cometas","Nebulosas","Galaxias","Astronautas","Telescopios","Meteoritos","Constelaciones",
     "Satélites","Exploración espacial","Estación Espacial","Rovers","Exoplanetas","Supernovas","Agujeros de gusano","Materia oscura","Cinturón de asteroides","Vía Láctea",
@@ -153,25 +151,12 @@ nightModeBtn.addEventListener('click', ()=>{
 });
 
 // Empezar juego
-// Elegir tema único para ciudadanos
-const category = categorySelect.value;
-let citizenTheme = "";
-
-if(category === "Personalizado"){
-  const customTheme = document.getElementById('customThemeInput').value.trim();
-  if(customTheme === ""){
-    alert("Debes escribir un tema personalizado");
+startBtn.addEventListener('click', ()=>{
+  const numPlayers = parseInt(numPlayersInput.value);
+  const numImpostors = parseInt(numImpostorsInput.value);
+  if(numImpostors >= numPlayers){
+    alert("Los impostores no pueden ser iguales o más que los jugadores");
     return;
-  }
-  citizenTheme = customTheme;
-} else {
-  let categoryThemes = themes[category];
-  if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
-  citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
-}
-
-currentTheme = citizenTheme;
-players.forEach(p=>{ if(!p.isImpostor) p.theme = citizenTheme; })
   }
 
   players = [];
@@ -194,9 +179,21 @@ players.forEach(p=>{ if(!p.isImpostor) p.theme = citizenTheme; })
 
   // Elegir tema único para ciudadanos
   const category = categorySelect.value;
-  let categoryThemes = themes[category];
-  if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
-  const citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
+  let citizenTheme = "";
+
+  if(category === "Personalizado"){
+    const customTheme = document.getElementById('customThemeInput').value.trim();
+    if(customTheme === ""){
+      alert("Debes escribir un tema personalizado");
+      return;
+    }
+    citizenTheme = customTheme;
+  } else {
+    let categoryThemes = themes[category];
+    if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
+    citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
+  }
+
   currentTheme = citizenTheme;
   players.forEach(p=>{ if(!p.isImpostor) p.theme = citizenTheme; });
 
@@ -242,19 +239,4 @@ nextBtn.addEventListener('click', ()=>{
 function showSummary(){
   roleScreen.style.display = 'none';
   summaryScreen.style.display = 'block';
-  summaryList.innerHTML = '';
-  players.forEach(p=>{
-    const li = document.createElement('li');
-    li.innerText = `${p.name} - ${p.isImpostor ? 'IMPOSTOR' : p.theme}`;
-    if(p.isImpostor) li.classList.add('impostor');
-    summaryList.appendChild(li);
-  });
-}
-
-// Terminar partida
-endBtn.addEventListener('click', ()=>{
-  location.reload();
-
-});
-
-
+  summary
