@@ -1,348 +1,165 @@
-/* Juego del Impostor - script.js
-   Incluye:
-   - WebAudio para efectos sin archivos
-   - Temporizador circular por turno
-   - Modo Noche / Fiesta
-   - Descarga de resumen
-   - Controles (sonidos ON/OFF y volumen)
-*/
-
-/* ====== ELEMENTOS ====== */
-const numPlayersSelect = document.getElementById('numPlayersSelect');
-const playerNamesDiv = document.getElementById('playerNames');
-const numImpostorsInput = document.getElementById('numImpostors');
-const categorySelect = document.getElementById('categorySelect');
-const startBtn = document.getElementById('startBtn');
-const soundToggle = document.getElementById('soundToggle');
-const nightBtn = document.getElementById('nightModeBtn');
-const partyBtn = document.getElementById('partyBtn');
-
-const setupSection = document.getElementById('setup');
-const roleScreen = document.getElementById('roleScreen');
-const summaryScreen = document.getElementById('summaryScreen');
-
-const turnText = document.getElementById('turnText');
-const flipCard = document.getElementById('flipCard');
-const flipInner = document.getElementById('flipInner');
-const roleDisplay = document.getElementById('roleDisplay');
-
-const showRoleBtn = document.getElementById('showRoleBtn');
-const nextBtn = document.getElementById('nextBtn');
-const skipBtn = document.getElementById('skipBtn');
-const endBtn = document.getElementById('endBtn');
-
-const timerText = document.getElementById('timerText');
-const ringFg = document.getElementById('ringFg');
-const turnTimeInput = document.getElementById('turnTime');
-const volumeControl = document.getElementById('volume');
-
-const summaryList = document.getElementById('summaryList');
-const downloadBtn = document.getElementById('downloadBtn');
-const restartBtn = document.getElementById('restartBtn');
-
-/* ====== DATOS / TEMAS ====== */
 const themes = {
-  Deportes: ["Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf"],
-  Música: ["Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Jazz","Hip-Hop","Blues","Salsa"],
-  Series: ["Breaking Bad","La Casa de Papel","Stranger Things","Friends","The Office","Rick y Morty","Game of Thrones"],
-  Videojuegos: ["Fortnite","Minecraft","Call of Duty","GTA","FIFA","Mario","Zelda","Pokémon","LOL","Among Us"],
-  Películas: ["Harry Potter","Star Wars","Avatar","Jurassic Park","El Señor de los Anillos","Inception"],
-  Animales: ["Gatos","Perros","Tiburones","Leones","Águilas","Delfines","Pingüinos"],
-  Famosos: ["Cristiano Ronaldo","Lionel Messi","Shakira","Beyoncé","Taylor Swift","Rosalía","LeBron James"],
-  Aleatorio: []
+  Deportes:[ "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf","Esgrima","Rugby","Hockey","Skate","Snowboard","Surf","Paracaidismo","Voleibol","Ping Pong","Karate","Judo","Taekwondo","Motociclismo","Automovilismo","Triatlón","Remo","Escalada","Esquí","Patinaje","Carreras de caballos","BMX","Lucha libre","Billar","Boliche","Golf Mini","Carreras de drones","Tiro con arco","Squash","Cricket"],
+  Música:[ "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Techno","Clásica","Jazz","Hip-Hop","Blues","Country","Salsa","Bachata","Funk","Metal","R&B","Disco","House","Dubstep","K-Pop","Vocaloid","Folk","Opera","Grunge","Punk","Soul","Rap","Gospel","Reggae"],
+  Series:[ "Breaking Bad","La Casa de Papel","Stranger Things","The Walking Dead","Vikingos","Friends","The Office","Rick y Morty","Adventure Time","Los Simpsons","Family Guy","How I Met Your Mother","Game of Thrones","Sherlock","Black Mirror","Dexter","The Mandalorian","The Witcher","Dark","Narcos","The Boys","Westworld","Peaky Blinders","Umbrella Academy","Loki","WandaVision"],
+  Videojuegos:[ "Fortnite","Minecraft","Call of Duty","GTA","FIFA","Zelda","Mario Bros","Pokémon","League of Legends","Among Us","Roblox","Overwatch","Apex Legends","Valorant","Assassin's Creed","Resident Evil","The Sims","Cyberpunk","God of War","Halo","Battlefield","Rocket League","Tetris","Street Fighter","Mortal Kombat","Animal Crossing","Final Fantasy","Metroid","Starcraft","Diablo"],
+  Películas:[ "Harry Potter","Star Wars","Avatar","Indiana Jones","Jurassic Park","El Señor de los Anillos","Matrix","The Avengers","Deadpool","Titanic","Spiderman","Iron Man","Hulk","Thor","Capitán América","Black Panther","Doctor Strange","Wonder Woman","Aquaman","Joker","Inception","Interstellar","Gladiator","Pirates of the Caribbean","Shrek","Toy Story","Frozen","Coco","The Lion King","Aladdin","Moana"],
+  Animales:[ "Águilas","Leones","Tiburones","Dinosaurios","Gatos","Perros","Animales marinos","Elefantes","Jirafas","Tigres","Lobos","Serpientes","Rinocerontes","Hipopótamos","Orcas","Delfines","Peces tropicales","Cocodrilos","Osos","Zorros","Mapaches","Pingüinos","Canguros","Lémures","Nutrias","Búhos","Murciélagos","Caballos","Gorilas","Chimpancés"],
+  Ciencia:[ "Física","Química","Biología","Matemáticas","Astronomía","Genética","Ecología","Robótica","Inteligencia Artificial","Nanotecnología","Neurociencia","Ingeniería","Informática","Meteorología","Geología","Astrobiología","Psicología","Sociología","Antropología","Oceanografía","Química Orgánica","Química Inorgánica","Biotecnología","Astrofísica","Electrónica","Telecomunicaciones","Ingeniería Biomédica","Ingeniería Aeroespacial"],
+  Arte:[ "Pintura","Escultura","Fotografía","Dibujo","Graffiti","Arquitectura","Diseño Gráfico","Arte Digital","Caligrafía","Cerámica","Origami","Collage","Performance","Arte Urbano","Diseño de Moda","Ilustración","Mosaico","Vidrieras","Tatuaje","Arte Conceptual"],
+  Comida:[ "Pizza","Hamburguesa","Tacos","Sushi","Chocolate","Helado","Frutas","Verduras","Postres","Bebidas","Pasta","Risotto","Paella","Ceviche","Empanadas","Curry","Chili","Hot Dog","Panqueques","Waffles","Donuts","Bebidas energéticas","Smoothies","Sopas","Ensaladas","Mariscos","Quesos","Carnes asadas","Bollería","Tapas"],
+  Espacio:[ "Planetas","Estrellas","Agujeros negros","Cometas","Nebulosas","Galaxias","Astronautas","Telescopios","Meteoritos","Constelaciones","Satélites","Exploración espacial","Estación Espacial","Rovers","Exoplanetas","Supernovas","Agujeros de gusano","Materia oscura"],
+  Fantasía:[ "Dragones","Elfos","Orcos","Magos","Hadas","Vampiros","Zombies","Fénix","Unicornios","Sirenas","Gigantes","Enanos","Brujas","Demonios","Ángeles","Fantasma","Licántropos","Hobbits","Goblins","Genios","Espadas mágicas","Amuletos","Pociones","Hechizos"],
+  Historia:[ "Egipto","Roma","Grecia","Mesopotamia","Edad Media","Renacimiento","Revolución Francesa","Guerras Mundiales","Imperio Bizantino","Vikingos","Incas","Mayas","Aztecas","China Antigua","Japón Feudal","Genghis Khan","Napoleón","Hitler","Lincoln","George Washington"],
+  Literatura:[ "Cien Años de Soledad","Don Quijote","Hamlet","Romeo y Julieta","Moby Dick","Orgullo y Prejuicio","El Principito","La Divina Comedia","Sherlock Holmes","Harry Potter","Percy Jackson","El Hobbit","El Señor de los Anillos","Juego de Tronos","Crónica de una Muerte Anunciada"],
+  Aleatorio:[]
 };
-Object.keys(themes).forEach(k=>{ if(k!=="Aleatorio") themes.Aleatorio.push(...themes[k]); });
+
+// Llenar Aleatorio
+Object.keys(themes).forEach(cat=>{
+  if(cat !== "Aleatorio"){
+    themes[cat].forEach(t => themes.Aleatorio.push(t));
+  }
+});
 
 let players = [];
 let currentIndex = 0;
 let currentTheme = "";
-let timerInterval = null;
-let remaining = 0;
-let totalTime = 15;
-let audioEnabled = true;
 
-/* ====== AUDIO: WebAudio simple effects ====== */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const numPlayersInput = document.getElementById('numPlayers');
+const numImpostorsInput = document.getElementById('numImpostors');
+const categorySelect = document.getElementById('categorySelect');
+const playerNamesDiv = document.getElementById('playerNames');
+const startBtn = document.getElementById('startBtn');
+const nightModeBtn = document.getElementById('nightModeBtn');
 
-function playBeep(freq=440, time=0.06, type='sine'){
-  if(!audioEnabled) return;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = type;
-  o.frequency.value = freq;
-  g.gain.value = volumeControl.value;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start();
-  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + time);
-  o.stop(audioCtx.currentTime + time + 0.02);
-}
+const setupDiv = document.getElementById('setup');
+const roleScreen = document.getElementById('roleScreen');
+const turnText = document.getElementById('turnText');
+const showRoleBtn = document.getElementById('showRoleBtn');
+const roleDisplay = document.getElementById('roleDisplay');
+const nextBtn = document.getElementById('nextBtn');
+const endBtn = document.getElementById('endBtn');
 
-function playFlipSound(){
-  // small descending beep sequence
-  if(!audioEnabled) return;
-  playBeep(880, 0.05, 'sine');
-  setTimeout(()=>playBeep(660,0.06,'sine'),80);
-  setTimeout(()=>playBeep(440,0.08,'sine'),160);
-}
+const summaryScreen = document.getElementById('summaryScreen');
+const summaryList = document.getElementById('summaryList');
 
-function playNextSound(){
-  if(!audioEnabled) return;
-  playBeep(700,0.06,'triangle');
-  setTimeout(()=>playBeep(900,0.04,'triangle'),90);
-}
-
-function playErrorSound(){
-  if(!audioEnabled) return;
-  playBeep(220,0.15,'sawtooth');
-}
-
-/* ====== UI: crear select de jugadores ====== */
-for(let i=3;i<=20;i++){
-  const opt = document.createElement('option');
-  opt.value = i; opt.textContent = `${i} jugadores`;
-  numPlayersSelect.appendChild(opt);
-}
-generateInputs();
-numPlayersSelect.addEventListener('change', generateInputs);
-
-function generateInputs(){
+// Crear inputs
+function createPlayerInputs() {
   playerNamesDiv.innerHTML = '';
-  const n = parseInt(numPlayersSelect.value || 6);
-  for(let i=0;i<n;i++){
-    const wrapper = document.createElement('div');
-    wrapper.className = 'player-card';
+  const num = parseInt(numPlayersInput.value);
+  for(let i=0; i<num; i++){
     const input = document.createElement('input');
     input.type = 'text';
+    input.value = `Jugador ${i+1}`;
     input.id = `player${i}`;
-    input.placeholder = `Jugador ${i+1}`;
-    wrapper.appendChild(input);
-    playerNamesDiv.appendChild(wrapper);
+    playerNamesDiv.appendChild(input);
   }
 }
+createPlayerInputs();
+numPlayersInput.addEventListener('change', createPlayerInputs);
 
-/* ====== START GAME ====== */
+// Modo noche
+nightModeBtn.addEventListener('click', ()=>{
+  document.body.classList.toggle('night');
+});
+
+// Empezar juego
 startBtn.addEventListener('click', ()=>{
-
-  // resume audio on user gesture (mobile)
-  if(audioCtx.state === 'suspended') audioCtx.resume();
-
-  const numPlayers = parseInt(numPlayersSelect.value);
+  const numPlayers = parseInt(numPlayersInput.value);
   const numImpostors = parseInt(numImpostorsInput.value);
-  totalTime = parseInt(turnTimeInput.value) || 15;
 
   if(numImpostors >= numPlayers){
-    playErrorSound();
-    return alert('Los impostores no pueden ser iguales o superiores al número de jugadores.');
+    alert("Los impostores no pueden ser iguales o más que los jugadores");
+    return;
   }
 
-  // crear jugadores
   players = [];
-  for(let i=0;i<numPlayers;i++){
+  for(let i=0; i<numPlayers; i++){
     const name = document.getElementById(`player${i}`).value.trim() || `Jugador ${i+1}`;
-    players.push({ name, isImpostor:false, theme:'' });
+    players.push({name, isImpostor:false, theme:""});
   }
 
-  // mezclar
-  players.sort(()=>Math.random()-0.5);
+  // 👉 ORDEN ALEATORIO DE JUGADORES
+  players = players.sort(() => Math.random() - 0.5);
 
-  // asignar impostores
-  let assigned = 0;
-  while(assigned < numImpostors){
+  // Asignar impostores
+  let impostorsAssigned = 0;
+  while(impostorsAssigned < numImpostors){
     const idx = Math.floor(Math.random()*players.length);
     if(!players[idx].isImpostor){
-      players[idx].isImpostor = true; assigned++;
+      players[idx].isImpostor = true;
+      impostorsAssigned++;
     }
   }
 
-  // tema
-  const cat = categorySelect.value;
-  const list = themes[cat] || themes.Aleatorio;
-  currentTheme = list[Math.floor(Math.random()*list.length)];
-  players.forEach(p => { if(!p.isImpostor) p.theme = currentTheme; });
+  // Tema ciudadanos
+  const category = categorySelect.value;
+  let categoryThemes = themes[category];
+  if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
 
-  // UI
-  setupSection.style.display = 'none';
+  const citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
+  currentTheme = citizenTheme;
+
+  players.forEach(p=>{
+    if(!p.isImpostor) p.theme = citizenTheme;
+  });
+
+  setupDiv.style.display = 'none';
   roleScreen.style.display = 'block';
+
   currentIndex = 0;
   updateTurn();
-  playBeep(520, 0.08, 'sine');
 });
 
-/* ====== UPDATE TURN ====== */
+// Actualizar turno
 function updateTurn(){
-  if(players.length === 0) return;
-  turnText.textContent = `Turno de ${players[currentIndex].name}`;
-  roleDisplay.innerText = '';
-  flipCard.classList.remove('flip');
-  showRoleBtn.style.display = 'inline-block';
+  roleDisplay.style.display = 'none';
+  roleDisplay.classList.remove('show');
   nextBtn.style.display = 'none';
-  skipBtn.style.display = 'inline-block';
-  resetTimer();
+  showRoleBtn.style.display = 'inline';
+  turnText.innerText = `Turno de ${players[currentIndex].name}`;
 }
 
-/* ====== TIMER ====== */
-function resetTimer(){
-  clearInterval(timerInterval);
-  remaining = totalTime;
-  updateRing();
-  timerText.textContent = String(remaining);
-}
-
-function startTimer(){
-  clearInterval(timerInterval);
-  remaining = totalTime;
-  updateRing();
-  timerText.textContent = String(remaining);
-  timerInterval = setInterval(()=>{
-    remaining--;
-    timerText.textContent = String(remaining);
-    updateRing();
-    if(remaining <= 0){
-      clearInterval(timerInterval);
-      // auto flip to next (simulate timeout)
-      onTimeEnd();
-    }
-  }, 1000);
-}
-
-// ring animation update (circle circumference ~ 2πr where r=45 -> ~283)
-function updateRing(){
-  const circumference = 2 * Math.PI * 45;
-  const fraction = Math.max(0, Math.min(1, remaining / totalTime));
-  const offset = Math.round(circumference * (1 - fraction));
-  ringFg.style.strokeDashoffset = offset;
-}
-
-/* ====== ACTIONS: flip/show role/next/skip ====== */
+// Mostrar rol
 showRoleBtn.addEventListener('click', ()=>{
-  const p = players[currentIndex];
-  roleDisplay.innerText = p.isImpostor ? 'IMPOSTOR' : `Tu tema: ${p.theme}`;
-  flipCard.classList.add('flip');
-  playFlipSound();
+  const player = players[currentIndex];
+
+  roleDisplay.style.display = 'block';
+  roleDisplay.classList.remove('show');
+
+  setTimeout(()=>{
+    roleDisplay.innerText = player.isImpostor ? "IMPOSTOR" : `Tu tema: ${player.theme}`;
+    roleDisplay.classList.add('show');
+  }, 50);
+
   showRoleBtn.style.display = 'none';
-  nextBtn.style.display = 'none';
-  skipBtn.style.display = 'none';
-  // iniciar temporizador para que jugador vea su rol (si quieres que empiece al mostrar)
-  startTimer();
-  // mostrar botón siguiente solo cuando termine el turno o al pulsar Siguiente
-  nextBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline';
 });
 
-skipBtn.addEventListener('click', ()=>{
-  // saltar (no mostrar rol): pasar al siguiente
-  playNextSound();
-  currentIndex++;
-  if(currentIndex < players.length) updateTurn();
-  else showSummary();
-});
-
+// Siguiente
 nextBtn.addEventListener('click', ()=>{
-  // parar timer y pasar
-  clearInterval(timerInterval);
-  playNextSound();
-  flipCard.classList.remove('flip');
   currentIndex++;
-  if(currentIndex < players.length) updateTurn();
-  else showSummary();
-});
-
-// allow clicking the flipcard itself to reveal when on role screen
-flipCard.addEventListener('click', ()=>{
-  if(showRoleBtn.style.display !== 'none'){
-    showRoleBtn.click();
-  }
-});
-
-// keyboard: space to flip
-document.addEventListener('keydown', (e)=>{
-  if(e.code === 'Space' && roleScreen.style.display === 'block'){
-    e.preventDefault();
-    if(showRoleBtn.style.display !== 'none') showRoleBtn.click();
-    else if(nextBtn.style.display !== 'none') nextBtn.click();
-  }
-});
-
-/* ====== TIME END HANDLER ====== */
-function onTimeEnd(){
-  playBeep(300, 0.18, 'sawtooth');
-  // si el rol ya fue mostrado, avanzamos; si no, forzamos mostrar y luego avanzar
-  if(flipCard.classList.contains('flip')){
-    // rol ya visible -> pasar automáticamente al siguiente
-    setTimeout(()=>{ nextBtn.click(); }, 500);
+  if(currentIndex < players.length){
+    updateTurn();
   } else {
-    // no visible -> mostrar por el jugador (autoflip) y luego pasar
-    showRoleBtn.click();
-    setTimeout(()=>{ nextBtn.click(); }, 1500);
+    showSummary();
   }
-}
+});
 
-/* ====== SUMMARY ====== */
+// Resumen
 function showSummary(){
   roleScreen.style.display = 'none';
   summaryScreen.style.display = 'block';
-  summaryList.innerHTML = '';
+  summaryList.innerHTML = "";
+
   players.forEach(p=>{
     const li = document.createElement('li');
-    li.textContent = `${p.name} — ${p.isImpostor ? 'IMPOSTOR' : p.theme}`;
-    if(p.isImpostor){ li.style.color = '#ff3b3b'; li.style.fontWeight = '700'; }
+    li.innerText = `${p.name} - ${p.isImpostor ? "IMPOSTOR" : p.theme}`;
+    if(p.isImpostor) li.classList.add('impostor');
     summaryList.appendChild(li);
   });
 }
 
-/* Descargar resumen */
-downloadBtn.addEventListener('click', ()=>{
-  const blob = new Blob([summaryListToText()], {type:'text/plain;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'resumen_impostor.txt';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-});
-
-function summaryListToText(){
-  let s = 'Resumen de la partida\n\n';
-  players.forEach(p => {
-    s += `${p.name} - ${p.isImpostor ? 'IMPOSTOR' : p.theme}\n`;
-  });
-  return s;
-}
-
-/* RESTART */
-restartBtn.addEventListener('click', ()=> location.reload());
-
-/* ====== MODE NIGHT / PARTY / SOUNDS ====== */
-nightBtn.addEventListener('click', ()=>{
-  document.body.classList.toggle('dark');
-  // save preference
-  localStorage.setItem('impostor_night', document.body.classList.contains('dark') ? '1':'0');
-});
-
-partyBtn.addEventListener('click', ()=>{
-  document.body.classList.toggle('party');
-  // small party audio pulse
-  if(document.body.classList.contains('party')){
-    // loop small beep
-    partyLoop = setInterval(()=>{ playBeep(220 + Math.random()*600, 0.05, 'sine'); }, 250);
-    partyBtn.textContent = 'Fiesta ON';
-  } else {
-    clearInterval(partyLoop);
-    partyBtn.textContent = 'Modo Fiesta';
-  }
-});
-let partyLoop = null;
-
-// sonido toggle
-soundToggle.addEventListener('click', ()=>{
-  audioEnabled = !audioEnabled;
-  soundToggle.textContent = `Sonidos: ${audioEnabled ? 'ON' : 'OFF'}`;
-});
-
-// volumen control
-volumeControl.addEventListener('input', ()=> {
-  // nothing else needed — we read volumeControl.value when playing
-});
-
-/* Restore mode preferences */
-if(localStorage.getItem('impostor_night') === '1') document.body.classList.add('dark');
-
-/* ====== END ====== */
+// Terminar
+endBtn.addEventListener('click', ()=> location.reload());
