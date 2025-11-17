@@ -62,6 +62,19 @@ const themes = {
     "Croquetas","Gazpacho","Salmorejo","Arepas","Falafel","Tortilla Española","Baguette","Burrito","Dim Sum","Bruschetta",
     "Sándwiches","Café","Té","Chocolate caliente","Mousse","Fondue","Cevapcici","Yakitori","Kebab","Ramen"
   ],
+  Famosos : [
+    "Cristiano Ronaldo", "Lionel Messi", "LeBron James", "Michael Jordan", "Serena Williams", "Roger Federer", "Rafael Nadal",
+  "Tom Cruise", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Scarlett Johansson", "Will Smith", "Dwayne Johnson",
+  "Robert Downey Jr.", "Jennifer Lopez", "Shakira", "Beyoncé", "Taylor Swift", "Ariana Grande", "Kanye West", "Elon Musk",
+  "Bill Gates", "Oprah Winfrey", "Kim Kardashian", "Emma Watson", "Chris Hemsworth", "Gal Gadot", "Zendaya", "Harry Styles",
+  "Selena Gomez", "Justin Bieber", "Ed Sheeran", "Kylie Jenner", "Dua Lipa", "Drake", "Cardi B", "Rihanna", "Tom Hanks",
+  // Españoles
+  "Penélope Cruz", "Antonio Banderas", "Javier Bardem", "Salma Hayek", "Pablo Alborán", "Rosalía", "David Bisbal",
+  "Miguel Bosé", "Sergio Ramos", "Iker Casillas", "Fernando Torres", "Andrés Iniesta", "Pau Gasol", "Marc Gasol",
+  "Almodóvar", "Blanca Suárez", "Úrsula Corberó", "Pedro Alonso", "Álvaro Morte", "Mario Casas", "Elsa Pataky",
+  "Sara Carbonero", "Iker Casillas", "Alejandro Sanz", "Antonio Orozco", "Vanesa Martín", "Rafa Nadal", "Carla Suárez",
+  "Ferrán Adrià", "David Villa", "Severiano Ballesteros", "Fernando Alonso", "Jorge Lorenzo", "Penélope Cruz", "Rosalía"
+    ],
   Espacio: [
     "Planetas","Estrellas","Agujeros negros","Cometas","Nebulosas","Galaxias","Astronautas","Telescopios","Meteoritos","Constelaciones",
     "Satélites","Exploración espacial","Estación Espacial","Rovers","Exoplanetas","Supernovas","Agujeros de gusano","Materia oscura","Cinturón de asteroides","Vía Láctea",
@@ -230,3 +243,4 @@ endBtn.addEventListener('click', ()=>{
   location.reload();
 
 });
+
