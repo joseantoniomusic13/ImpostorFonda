@@ -153,12 +153,25 @@ nightModeBtn.addEventListener('click', ()=>{
 });
 
 // Empezar juego
-startBtn.addEventListener('click', ()=>{
-  const numPlayers = parseInt(numPlayersInput.value);
-  const numImpostors = parseInt(numImpostorsInput.value);
-  if(numImpostors >= numPlayers){
-    alert("Los impostores no pueden ser iguales o más que los jugadores");
+// Elegir tema único para ciudadanos
+const category = categorySelect.value;
+let citizenTheme = "";
+
+if(category === "Personalizado"){
+  const customTheme = document.getElementById('customThemeInput').value.trim();
+  if(customTheme === ""){
+    alert("Debes escribir un tema personalizado");
     return;
+  }
+  citizenTheme = customTheme;
+} else {
+  let categoryThemes = themes[category];
+  if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
+  citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
+}
+
+currentTheme = citizenTheme;
+players.forEach(p=>{ if(!p.isImpostor) p.theme = citizenTheme; })
   }
 
   players = [];
@@ -243,4 +256,5 @@ endBtn.addEventListener('click', ()=>{
   location.reload();
 
 });
+
 
