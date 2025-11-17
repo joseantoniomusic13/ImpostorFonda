@@ -8,6 +8,13 @@
   body{font-family:Arial,Helvetica,sans-serif;background:#f7f7f7;margin:0;padding:18px;transition:background .25s,color .25s}
   body.night{background:#121212;color:#eee}
   .container{max-width:600px;margin:20px auto;text-align:center}
+   .logo {
+    width:100px;
+    margin: 0 auto 15px;
+    display:block;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s;}
   .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:16px}
   body.night .card{background:#222;color:#eee}
   label{display:block;text-align:left;margin-top:12px;font-weight:700}
@@ -28,12 +35,13 @@
 <body>
   <div class="container">
     <div class="card" id="setup">
+      <img src="icon.png" alt="Icono Juego" class="logo">
       <h1>Juego del Impostor</h1>
       <h3 class="small">Hecho por Jose Antonio</h3>
 
       <label for="numPlayersSelect">Jugadores:</label>
       <select id="numPlayersSelect" aria-label="Número de jugadores"></select>
-
+      <label for="numPlayersSelect">Nombre de Jugadores:</label>
       <div id="playerNames" style="margin-top:10px"></div>
 
       <div style="display:flex;gap:8px;margin-top:10px">
@@ -44,15 +52,23 @@
         <div style="flex:1">
           <label for="categorySelect">Categoría:</label>
           <select id="categorySelect">
-            <option value="Deportes">Deportes</option>
-            <option value="Música">Música</option>
-            <option value="Series">Series</option>
-            <option value="Videojuegos">Videojuegos</option>
-            <option value="Películas">Películas</option>
-            <option value="Animales">Animales</option>
-            <option value="Famosos">Famosos</option>
-            <option value="Aleatorio">Aleatorio</option>
-            <option value="Personalizado">Escribir tema</option>
+          <option value="Deportes">Deportes</option>
+          <option value="Música">Música</option>
+          <option value="Series">Series</option>
+          <option value="Videojuegos">Videojuegos</option>
+          <option value="Películas">Películas</option>
+          <option value="Animales">Animales</option>
+          <option value="Ciencia">Ciencia</option>
+          <option value="Arte">Arte</option>
+          <option value="Comida">Comida</option>
+          <option value="Espacio">Espacio</option>
+          <option value="Fantasía">Fantasía</option>
+          <option value="Historia">Historia</option>
+          <option value="Literatura">Literatura</option>
+          <option value="Famosos">Personajes Famosos</option>
+          <option value="Aleatorio">Aleatorio</option>
+          <option value="Personalizado">Escribir tema</option>
+
           </select>
         </div>
       </div>
