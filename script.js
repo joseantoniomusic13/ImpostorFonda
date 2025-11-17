@@ -26,7 +26,7 @@ let players = [];
 let currentIndex = 0;
 let currentTheme = "";
 
-const numPlayersInput = document.getElementById('numPlayers');
+const numPlayersInput = document.getElementById('numPlayersSelect');
 const numImpostorsInput = document.getElementById('numImpostors');
 const categorySelect = document.getElementById('categorySelect');
 const playerNamesDiv = document.getElementById('playerNames');
@@ -163,3 +163,4 @@ function showSummary(){
 
 // Terminar
 endBtn.addEventListener('click', ()=> location.reload());
+
