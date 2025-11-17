@@ -1,3 +1,4 @@
+// ================= TEMAS ==================
 const themes = {
   Deportes:[ "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf","Esgrima","Rugby","Hockey","Skate","Snowboard","Surf","Paracaidismo","Voleibol","Ping Pong","Karate","Judo","Taekwondo","Motociclismo","Automovilismo","Triatlón","Remo","Escalada","Esquí","Patinaje","Carreras de caballos","BMX","Lucha libre","Billar","Boliche","Golf Mini","Carreras de drones","Tiro con arco","Squash","Cricket"],
   Música:[ "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Techno","Clásica","Jazz","Hip-Hop","Blues","Country","Salsa","Bachata","Funk","Metal","R&B","Disco","House","Dubstep","K-Pop","Vocaloid","Folk","Opera","Grunge","Punk","Soul","Rap","Gospel","Reggae"],
@@ -15,24 +16,26 @@ const themes = {
   Aleatorio:[]
 };
 
-// Llenar Aleatorio
-Object.keys(themes).forEach(cat=>{
+// Rellenar aleatorio
+Object.keys(themes).forEach(cat => {
   if(cat !== "Aleatorio"){
     themes[cat].forEach(t => themes.Aleatorio.push(t));
   }
 });
 
+// ================= VARIABLES ==================
 let players = [];
 let currentIndex = 0;
 let currentTheme = "";
 
+// HTML
 const numPlayersInput = document.getElementById('numPlayersSelect');
 const numImpostorsInput = document.getElementById('numImpostors');
 const categorySelect = document.getElementById('categorySelect');
 const playerNamesDiv = document.getElementById('playerNames');
 const startBtn = document.getElementById('startBtn');
-const nightModeBtn = document.getElementById('nightModeBtn');
 
+// Pantallas
 const setupDiv = document.getElementById('setup');
 const roleScreen = document.getElementById('roleScreen');
 const turnText = document.getElementById('turnText');
@@ -44,28 +47,25 @@ const endBtn = document.getElementById('endBtn');
 const summaryScreen = document.getElementById('summaryScreen');
 const summaryList = document.getElementById('summaryList');
 
-// Crear inputs
-function createPlayerInputs() {
-  playerNamesDiv.innerHTML = '';
+
+// Crear inputs de jugadores
+function createPlayerInputs(){
+  playerNamesDiv.innerHTML = "";
   const num = parseInt(numPlayersInput.value);
   for(let i=0; i<num; i++){
-    const input = document.createElement('input');
-    input.type = 'text';
+    const input = document.createElement("input");
+    input.type = "text";
     input.value = `Jugador ${i+1}`;
     input.id = `player${i}`;
     playerNamesDiv.appendChild(input);
   }
 }
 createPlayerInputs();
-numPlayersInput.addEventListener('change', createPlayerInputs);
+numPlayersInput.addEventListener("change", createPlayerInputs);
 
-// Modo noche
-nightModeBtn.addEventListener('click', ()=>{
-  document.body.classList.toggle('night');
-});
 
 // Empezar juego
-startBtn.addEventListener('click', ()=>{
+startBtn.addEventListener("click", ()=>{
   const numPlayers = parseInt(numPlayersInput.value);
   const numImpostors = parseInt(numImpostorsInput.value);
 
@@ -77,11 +77,11 @@ startBtn.addEventListener('click', ()=>{
   players = [];
   for(let i=0; i<numPlayers; i++){
     const name = document.getElementById(`player${i}`).value.trim() || `Jugador ${i+1}`;
-    players.push({name, isImpostor:false, theme:""});
+    players.push({ name, isImpostor:false, theme:"" });
   }
 
-  // 👉 ORDEN ALEATORIO DE JUGADORES
-  players = players.sort(() => Math.random() - 0.5);
+  // Mezclar orden
+  players = players.sort(()=> Math.random() - 0.5);
 
   // Asignar impostores
   let impostorsAssigned = 0;
@@ -93,52 +93,48 @@ startBtn.addEventListener('click', ()=>{
     }
   }
 
-  // Tema ciudadanos
-  const category = categorySelect.value;
-  let categoryThemes = themes[category];
-  if(category === "Aleatorio") categoryThemes = themes.Aleatorio;
+  // Tema
+  let catThemes = themes[categorySelect.value];
+  if(categorySelect.value === "Aleatorio") catThemes = themes.Aleatorio;
 
-  const citizenTheme = categoryThemes[Math.floor(Math.random()*categoryThemes.length)];
-  currentTheme = citizenTheme;
+  const selectedTheme = catThemes[Math.floor(Math.random()*catThemes.length)];
+  currentTheme = selectedTheme;
 
   players.forEach(p=>{
-    if(!p.isImpostor) p.theme = citizenTheme;
+    if(!p.isImpostor) p.theme = selectedTheme;
   });
 
-  setupDiv.style.display = 'none';
-  roleScreen.style.display = 'block';
+  setupDiv.style.display = "none";
+  roleScreen.style.display = "block";
 
   currentIndex = 0;
   updateTurn();
 });
 
-// Actualizar turno
+
+// Cambiar turno
 function updateTurn(){
-  roleDisplay.style.display = 'none';
-  roleDisplay.classList.remove('show');
-  nextBtn.style.display = 'none';
-  showRoleBtn.style.display = 'inline';
+  roleDisplay.style.display = "none";
+  nextBtn.style.display = "none";
+  showRoleBtn.style.display = "inline";
   turnText.innerText = `Turno de ${players[currentIndex].name}`;
 }
 
+
 // Mostrar rol
-showRoleBtn.addEventListener('click', ()=>{
-  const player = players[currentIndex];
+showRoleBtn.addEventListener("click", ()=>{
+  const p = players[currentIndex];
 
-  roleDisplay.style.display = 'block';
-  roleDisplay.classList.remove('show');
+  roleDisplay.style.display = "block";
+  roleDisplay.innerText = p.isImpostor ? "IMPOSTOR" : `Tu tema: ${p.theme}`;
 
-  setTimeout(()=>{
-    roleDisplay.innerText = player.isImpostor ? "IMPOSTOR" : `Tu tema: ${player.theme}`;
-    roleDisplay.classList.add('show');
-  }, 50);
-
-  showRoleBtn.style.display = 'none';
-  nextBtn.style.display = 'inline';
+  showRoleBtn.style.display = "none";
+  nextBtn.style.display = "inline";
 });
 
-// Siguiente
-nextBtn.addEventListener('click', ()=>{
+
+// Siguiente jugador
+nextBtn.addEventListener("click", ()=>{
   currentIndex++;
   if(currentIndex < players.length){
     updateTurn();
@@ -147,20 +143,22 @@ nextBtn.addEventListener('click', ()=>{
   }
 });
 
-// Resumen
+
+// Resumen final
 function showSummary(){
-  roleScreen.style.display = 'none';
-  summaryScreen.style.display = 'block';
+  roleScreen.style.display = "none";
+  summaryScreen.style.display = "block";
+
   summaryList.innerHTML = "";
 
   players.forEach(p=>{
-    const li = document.createElement('li');
+    const li = document.createElement("li");
     li.innerText = `${p.name} - ${p.isImpostor ? "IMPOSTOR" : p.theme}`;
-    if(p.isImpostor) li.classList.add('impostor');
+    if(p.isImpostor) li.classList.add("impostor");
     summaryList.appendChild(li);
   });
 }
 
-// Terminar
-endBtn.addEventListener('click', ()=> location.reload());
 
+// Terminar juego
+endBtn.addEventListener("click", ()=> location.reload());
