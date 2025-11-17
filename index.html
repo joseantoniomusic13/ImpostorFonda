@@ -1,99 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego del Impostor</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 500px;
-      margin: 50px auto;
-      text-align: center;
-    }
-    .game-icon {
-      width: 100px;
-      margin-bottom: 20px;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    select, input[type="text"], select[name="numPlayersSelect"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    .player-card {
-      background: #f9f9f9;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-    }
-    .main-btn, .secondary-btn, .red-btn {
-      padding: 10px 20px;
-      margin: 10px 5px 0 5px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .main-btn { background: #4CAF50; color: white; }
-    .main-btn:hover { background: #45a049; }
-    .secondary-btn { background: #2196F3; color: white; }
-    .secondary-btn:hover { background: #1e88e5; }
-    .red-btn { background: #f44336; color: white; }
-    .red-btn:hover { background: #da190b; }
-    #roleDisplay {
-      font-size: 20px;
-      margin: 20px 0;
-      padding: 15px;
-      background: #eee;
-      border-radius: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juego del Impostor</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    margin:0; padding:0;
+    transition: background 0.3s, color 0.3s;
+  }
+  body.night {
+    background: #222;
+    color: #eee;
+  }
+  .container {
+    max-width: 500px;
+    margin: 30px auto;
+    text-align: center;
+  }
+  .card {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: background 0.3s, color 0.3s;
+  }
+  body.night .card { background: #333; color: #eee; }
+  label { display:block; margin-top:10px; font-weight:bold; text-align:left; }
+  input, select { width: 100%; padding:8px; margin-top:5px; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+  .player-card { margin:5px 0; }
+  button {
+    padding:10px 20px; margin:10px 5px 0 5px; border:none; border-radius:8px; font-size:16px; cursor:pointer;
+    transition: 0.2s;
+  }
+  .main-btn { background:#4CAF50; color:white; }
+  .main-btn:hover { background:#45a049; }
+  .secondary-btn { background:#2196F3; color:white; }
+  .secondary-btn:hover { background:#1e88e5; }
+  .red-btn { background:#f44336; color:white; }
+  .red-btn:hover { background:#da190b; }
+  #roleDisplay { margin:15px 0; padding:10px; border-radius:10px; background:#eee; font-size:18px; transition: background 0.3s; }
+  body.night #roleDisplay { background:#555; color:white; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <img src="icon.png" alt="Icono Juego" class="game-icon">
+<div class="container">
+  <img src="icon.png" alt="Icono Juego" style="width:80px; margin-bottom:15px;">
 
-    <!-- Setup -->
-    <div id="setup" class="card">
-      <h1>Juego del Impostor</h1>
-      <h2>Hecho por Jose Antonio</h2>
+  <!-- Setup -->
+  <div id="setup" class="card">
+    <h1>Juego del Impostor</h1>
+    <h2>Hecho por Jose Antonio</h2>
 
-      <label>Número de jugadores:</label>
-      <select id="numPlayersSelect">
-        <!-- JS generará las opciones -->
-      </select>
+    <label>Jugadores:</label>
+    <select id="numPlayersSelect"></select>
+    <div id="playerNames"></div>
 
-      <div id="playerNames"></div>
+    <label>Impostores:</label>
+    <input type="number" id="numImpostors" min="1" max="3" value="1">
 
-      <label>Impostores:</label>
-      <input type="number" id="numImpostors" min="1" max="3" value="1">
-
-      <label>Categoría:</label>
-      <select id="categorySelect">
+    <label>Categoría:</label>
+    <select id="categorySelect">
         <option value="Deportes">Deportes</option>
         <option value="Música">Música</option>
         <option value="Series">Series</option>
@@ -108,58 +78,72 @@
         <option value="Películas">Películas</option>
         <option value="Animales">Animales</option>
         <option value="Aleatorio">Aleatorio</option>
-      </select>
+      <option value="Personalizado">Escribir tema</option>
+    </select>
 
-      <button id="startBtn" class="main-btn">Empezar Juego</button>
-      <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
+    <div id="customThemeDiv" style="display:none;">
+      <label>Escribe tu tema:</label>
+      <input type="text" id="customThemeInput" placeholder="Tema personalizado">
     </div>
 
-    <!-- Rol -->
-    <div id="roleScreen" class="card" style="display:none;">
-      <h2 id="turnText"></h2>
-      <div id="roleDisplay"></div>
-      <button id="showRoleBtn" class="main-btn">Mostrar Rol</button>
-      <button id="nextBtn" class="secondary-btn" style="display:none;">Siguiente Jugador</button>
-      <button id="endBtn" class="red-btn">Terminar Partida</button>
-    </div>
-
-    <!-- Resumen -->
-    <div id="summaryScreen" class="card" style="display:none;">
-      <h2>Resumen de la Partida</h2>
-      <ul id="summaryList"></ul>
-      <button id="endBtnSummary" class="red-btn" onclick="location.reload()">Reiniciar</button>
-    </div>
+    <button id="startBtn" class="main-btn">Empezar Juego</button>
+    <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
   </div>
 
-  <script>
-    const numPlayersSelect = document.getElementById('numPlayersSelect');
-    const playerNamesDiv = document.getElementById('playerNames');
+  <!-- Rol -->
+  <div id="roleScreen" class="card" style="display:none;">
+    <h2 id="turnText"></h2>
+    <div id="roleDisplay"></div>
+    <button id="showRoleBtn" class="main-btn">Mostrar Rol</button>
+    <button id="nextBtn" class="secondary-btn" style="display:none;">Siguiente Jugador</button>
+    <button id="endBtn" class="red-btn">Terminar Partida</button>
+  </div>
 
-    // Llenar desplegable de número de jugadores
-    for(let i=3;i<=20;i++){
-      const option = document.createElement('option');
-      option.value = i;
-      option.text = i + " jugadores";
-      numPlayersSelect.appendChild(option);
+  <!-- Resumen -->
+  <div id="summaryScreen" class="card" style="display:none;">
+    <h2>Resumen de la Partida</h2>
+    <ul id="summaryList"></ul>
+    <button id="endBtnSummary" class="red-btn" onclick="location.reload()">Reiniciar</button>
+  </div>
+</div>
+
+<script>
+  // Número de jugadores
+  const numPlayersSelect = document.getElementById('numPlayersSelect');
+  const playerNamesDiv = document.getElementById('playerNames');
+  for(let i=3;i<=20;i++){
+    const option = document.createElement('option');
+    option.value=i; option.text=i+" jugadores";
+    numPlayersSelect.appendChild(option);
+  }
+
+  function createPlayerInputs(){
+    playerNamesDiv.innerHTML='';
+    const num=parseInt(numPlayersSelect.value);
+    for(let i=0;i<num;i++){
+      const div=document.createElement('div');
+      div.classList.add('player-card');
+      const input=document.createElement('input');
+      input.type='text'; input.placeholder='Nombre Jugador '+(i+1);
+      input.id='player'+i;
+      div.appendChild(input);
+      playerNamesDiv.appendChild(div);
     }
+  }
+  numPlayersSelect.addEventListener('change', createPlayerInputs);
+  createPlayerInputs();
 
-    function createPlayerInputs() {
-      playerNamesDiv.innerHTML = '';
-      const num = parseInt(numPlayersSelect.value);
-      for(let i=0;i<num;i++){
-        const div = document.createElement('div');
-        div.classList.add('player-card');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = "Nombre Jugador " + (i+1);
-        input.id = 'player' + i;
-        div.appendChild(input);
-        playerNamesDiv.appendChild(div);
-      }
-    }
+  // Mostrar input personalizado
+  const categorySelect=document.getElementById('categorySelect');
+  const customThemeDiv=document.getElementById('customThemeDiv');
+  categorySelect.addEventListener('change', ()=>{
+    if(categorySelect.value==='Personalizado') customThemeDiv.style.display='block';
+    else customThemeDiv.style.display='none';
+  });
 
-    numPlayersSelect.addEventListener('change', createPlayerInputs);
-    createPlayerInputs();
-  </script>
+  // Modo noche
+  const nightModeBtn=document.getElementById('nightModeBtn');
+  nightModeBtn.addEventListener('click',()=>document.body.classList.toggle('night'));
+</script>
 </body>
 </html>
