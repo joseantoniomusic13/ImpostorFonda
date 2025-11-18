@@ -3,55 +3,255 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Juego del Impostor - Corregido</title>
+<title>Juego del Impostor - Editado</title>
 <style>
-  body{font-family:Arial,Helvetica,sans-serif;background:#f7f7f7;margin:0;padding:18px;transition:background .25s,color .25s}
-  body.night{background:#121212;color:#eee}
-  .container{max-width:600px;margin:20px auto;text-align:center}
-   .logo {
-    width:100px;
-    margin: 0 auto 15px;
-    display:block;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.3s;}
-  .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:16px}
-  body.night .card{background:#222;color:#eee}
-  label{display:block;text-align:left;margin-top:12px;font-weight:700}
-  input,select{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:15px}
-  .player-card{margin:6px 0}
-  .controls{display:flex;gap:8px;align-items:center}
-  .controls button{flex:1;padding:10px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
-  .main-btn{background:#28a745;color:#fff}
-  .secondary-btn{background:#0d6efd;color:#fff}
-  .red-btn{background:#dc3545;color:#fff}
-  #roleDisplay{margin:14px 0;padding:12px;border-radius:10px;background:#efefef;font-size:18px}
-  body.night #roleDisplay{background:#333;color:#fff}
-  ul{text-align:left;padding-left:20px}
-  .hint{font-size:13px;color:#666;margin-top:8px;text-align:left}
-  .small{font-size:13px;color:#666}
+ /* ===== RESET ===== */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+
+/* ===== BODY ===== */
+body{
+  background: linear-gradient(135deg,#ffe6e6,#e6f0ff);
+  color:#222;
+  padding:20px;
+  transition:background 0.3s,color 0.3s;
+}
+body.night{
+  background: linear-gradient(135deg,#121212,#1f1f2e);
+  color:#eee;
+}
+
+/* ===== CONTENEDOR ===== */
+.container{
+  max-width:720px;
+  margin:20px auto;
+  text-align:center;
+}
+
+/* ===== LOGO ===== */
+.logo{
+  width:100px;
+  margin:0 auto 15px;
+  display:block;
+  border-radius:50%;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+  transition:transform 0.3s;
+}
+.logo:hover{transform:scale(1.05)}
+
+/* ===== TARJETAS ===== */
+.card{
+  background:rgba(255,255,255,0.95);
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.12);
+  margin-bottom:18px;
+  transition:background 0.3s,color 0.3s,transform 0.3s;
+}
+.card:hover{transform:translateY(-3px)}
+body.night .card{background:#2a2a3a;color:#eee}
+
+/* ===== LABELS ===== */
+label{
+  display:block;
+  text-align:left;
+  margin-top:12px;
+  font-weight:700;
+  font-size:14px;
+}
+
+/* ===== INPUTS & SELECTS ===== */
+input, select{
+  width:100%;
+  padding:10px 12px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:15px;
+  transition: all 0.25s;
+  background:#fff;
+  color:#222;
+}
+input:focus, select:focus{
+  outline:none;
+  border-color:#3b82f6;
+  box-shadow:0 0 6px rgba(59,130,246,0.4);
+}
+body.night input, body.night select{
+  background:#3a3a4a;
+  border:1px solid #555;
+  color:#eee;
+}
+
+/* ===== BOTONES ===== */
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.controls button{
+  flex:1;
+  padding:12px 18px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  letter-spacing:.3px;
+  font-size:15px;
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.main-btn{
+  background:linear-gradient(135deg,#34d399,#10b981);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(16,185,129,0.25);
+}
+.secondary-btn{
+  background:linear-gradient(135deg,#60a5fa,#3b82f6);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(59,130,246,0.25);
+}
+.red-btn{
+  background:linear-gradient(135deg,#fb7185,#f43f5e);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(244,63,94,0.25);
+}
+.ghost-btn{
+  background:transparent;
+  border:2px solid rgba(0,0,0,0.12);
+  color:inherit;
+}
+.controls button:hover{
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:0 12px 28px rgba(0,0,0,0.18);
+}
+.pulse{animation:pulse 1.6s infinite ease-in-out;}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+/* ===== AREA ROL ===== */
+#roleDisplay{
+  margin:16px 0;
+  padding:16px;
+  border-radius:12px;
+  background:#f0f4f8;
+  font-size:18px;
+  min-height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .35s,transform .35s,background 0.3s,color 0.3s;
+}
+#roleDisplay.show{opacity:1;transform:translateY(0);}
+body.night #roleDisplay{background:#3a3a4a;color:#fff;}
+
+/* ===== MODAL ANUNCIO CENTRADO ===== */
+.announce-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;       /* centra verticalmente */
+  justify-content: center;   /* centra horizontalmente */
+  background: rgba(0,0,0,0.4); /* fondo semitransparente */
+  z-index: 999;
+  backdrop-filter: blur(3px);
+}
+
+/* ===== TARJETA DEL MODAL ===== */
+.announce-card {
+  background: linear-gradient(180deg,#fff,#f7fafc);
+  padding: 28px;
+  border-radius: 14px;
+  min-width: 280px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: opacity 0.28s, transform 0.28s;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* CENTRADO HORIZONTAL */
+  gap: 12px;          /* separación entre título, subtítulo y botones */
+}
+
+/* ===== BOTONES DEL MODAL ===== */
+.announce-card button {
+  padding: 16px 28px;
+  font-size: 18px;
+  font-weight: 900;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.announce-card button.main-btn {
+  background: linear-gradient(90deg,#34d399,#10b981);
+  color: #fff;
+}
+
+.announce-card button.ghost-btn {
+  background: transparent;
+  border: 2px solid #10b981;
+  color: #10b981;
+}
+
+.announce-card button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+}
+.announce-card.show{opacity:1;transform:translateY(0);}
+.announce-player{font-size:24px;font-weight:900;margin-bottom:8px;}
+.announce-sub{font-size:14px;color:#555;margin-bottom:14px;}
+body.night .announce-card{background:#2f2f40;color:#eee;}
+body.night .announce-sub{color:#bbb;}
+
+/* ===== RESUMEN Y ORDEN ===== */
+ul{text-align:left;padding-left:20px;}
+#summaryList li, #orderList li{
+  padding:10px;
+  border-bottom:1px solid #eee;
+  border-radius:8px;
+  margin-bottom:5px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+#summaryList li.impostor{background:#fff0f0;color:#a00;font-weight:800;}
+body.night #summaryList li{border-color:#444;}
+#orderList li{background:#fff;padding:10px;border-radius:8px;border:1px solid #eee;}
+body.night #orderList li{background:#2f2f40;border-color:#555;color:#eee;}
+
+/* ===== HINTS ===== */
+.hint{font-size:13px;color:#555;margin-top:8px;text-align:left;}
+.small{font-size:13px;color:#555;}
+body.night .hint, body.night .small{color:#bbb;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:480px){
+  .controls{flex-direction:column;}
+  .controls button{width:100%;}
+  #roleDisplay{font-size:16px;}
+}
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" id="setup">
-      <img src="icon.png" alt="Icono Juego" class="logo">
-      <h1>Juego del Impostor</h1>
-      <h3 class="small">Hecho por Jose Antonio</h3>
+<div class="container">
+  <div class="card" id="setup">
+    <img src="icon.png" alt="Icono Juego" class="logo">
+    <h1>Juego del Impostor</h1>
+    <h3 class="small">Hecho por Jose Antonio</h3>
 
-      <label for="numPlayersSelect">Jugadores:</label>
-      <select id="numPlayersSelect" aria-label="Número de jugadores"></select>
-      <label for="numPlayersSelect">Nombre de Jugadores:</label>
-      <div id="playerNames" style="margin-top:10px"></div>
+    <label for="numPlayersSelect">Jugadores:</label>
+    <select id="numPlayersSelect" aria-label="Número de jugadores"></select>
 
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <div style="flex:1">
-          <label for="numImpostors">Impostores:</label>
-          <input id="numImpostors" type="number" min="1" max="10" value="1">
-        </div>
-        <div style="flex:1">
-          <label for="categorySelect">Categoría:</label>
-          <select id="categorySelect">
+    <label>Nombre de Jugadores:</label>
+    <div id="playerNames" style="margin-top:10px"></div>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1">
+        <label for="numImpostors">Impostores:</label>
+        <input id="numImpostors" type="number" min="1" max="10" value="1">
+      </div>
+      <div style="flex:1">
+        <label for="categorySelect">Categoría:</label>
+        <select id="categorySelect">
           <option value="Deportes">Deportes</option>
           <option value="Música">Música</option>
           <option value="Series">Series</option>
@@ -68,252 +268,391 @@
           <option value="Famosos">Personajes Famosos</option>
           <option value="Aleatorio">Aleatorio</option>
           <option value="Personalizado">Escribir tema</option>
-
-          </select>
-        </div>
-      </div>
-
-      <div id="customThemeDiv" style="display:none;margin-top:10px">
-        <label for="customThemeInput">Escribe tu tema:</label>
-        <input id="customThemeInput" type="text" placeholder="Tema personalizado (ej. Frutas raras)">
-      </div>
-
-      <div class="controls" style="margin-top:12px">
-        <button id="startBtn" class="main-btn">Empezar Juego</button>
-        <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
-      </div>
-
-      <p class="hint">Si dejas los nombres vacíos se asignará "Jugador X". Asegúrate de poner el número correcto de jugadores antes de empezar.</p>
-    </div>
-
-    <div class="card" id="roleScreen" style="display:none">
-      <h2 id="turnText">Turno</h2>
-      <div id="roleDisplay" aria-live="polite"></div>
-
-      <div class="controls" style="margin-top:8px">
-        <button id="showRoleBtn" class="main-btn">Mostrar Rol</button>
-        <button id="nextBtn" class="secondary-btn" style="display:none">Siguiente Jugador</button>
-        <button id="endBtn" class="red-btn">Terminar Partida</button>
+        </select>
       </div>
     </div>
 
-    <div class="card" id="summaryScreen" style="display:none">
-      <h2>Resumen de la Partida</h2>
-      <ul id="summaryList"></ul>
-      <div class="controls">
-        <button id="restartBtn" class="red-btn">Reiniciar</button>
-      </div>
+    <div id="customThemeDiv" style="display:none;margin-top:10px">
+      <label for="customThemeInput">Escribe tu tema:</label>
+      <input id="customThemeInput" type="text" placeholder="Tema personalizado (ej. Frutas raras)">
+    </div>
+
+    <div class="controls" style="margin-top:12px">
+      <button id="startBtn" class="main-btn pulse">Empezar Juego</button>
+      <button id="resumeBtn" class="secondary-btn" style="display:none">Reanudar Partida Guardada</button>
+      <button id="nightModeBtn" class="secondary-btn">Modo Noche</button>
+    </div>
+
+    <p class="hint">Si dejas los nombres vacíos se asignará "Jugador X". Asegúrate de poner el número correcto de jugadores antes de empezar.</p>
+    <p class="hint">La partida se guarda automáticamente para que puedas reanudar si cierras la app.</p>
+  </div>
+
+  <div class="card" id="roleScreen" style="display:none">
+    <h2 id="turnText">Turno</h2>
+    <div id="roleDisplay" aria-live="polite"></div>
+
+    <div class="controls" style="margin-top:8px">
+      <button id="announceBtn" class="secondary-btn">Anunciar Turno</button>
+      <button id="showRoleBtn" class="main-btn" style="display:none">Mostrar Rol</button>
+      <button id="nextBtn" class="secondary-btn" style="display:none">Siguiente Jugador</button>
+      <button id="endBtn" class="red-btn">Terminar Partida</button>
     </div>
   </div>
 
+  <div class="card" id="middleScreen" style="display:none">
+    <h2>Ronda Completa</h2>
+    <p class="hint">Has llegado al final de los turnos. Desde aquí puedes ver el <strong>Resumen de la Partida</strong> o el <strong>Orden de la Partida</strong> para empezar a jugar.</p>
+    <div class="controls">
+      <button id="viewOrderBtn" class="secondary-btn">Ver Orden de la Partida</button>
+      <button id="viewSummaryBtn" class="main-btn">Resumen de la Partida</button>
+      <button id="restartBtn" class="red-btn">Reiniciar Partida</button>
+    </div>
+  </div>
+
+  <div class="card" id="summaryScreen" style="display:none">
+    <h2>Resumen de la Partida</h2>
+    <ul id="summaryList"></ul>
+    <h3 style="margin-top:12px">Orden de Turnos</h3>
+    <ul id="orderList"></ul>
+    <div class="controls" style="margin-top:12px">
+      <button id="backToSetupBtn" class="ghost-btn">Volver a Configuración</button>
+      <button id="backToMiddleBtn" class="secondary-btn">Volver al resumen de turnos</button>
+      <button id="clearSaveBtn" class="red-btn">Borrar Guardado</button>
+    </div>
+</div>
+
+<div id="announceModal" class="announce-wrap" style="display:none">
+  <div class="announce-card" id="announceCard">
+    <div class="announce-player" id="announceName">Jugador X</div>
+    <div class="announce-sub">Prepárate a ver tu rol</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+      <button id="announceContinue" class="main-btn">Ver mi Rol</button>
+      <button id="announceSkip" class="ghost-btn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
+// ===== DATOS/TEMAS =====
+const themes = {
+ Deportes: [
+    "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf",
+    "Esgrima","Rugby","Hockey","Skate","Snowboard","Surf","Paracaidismo","Voleibol","Ping Pong",
+    "Karate","Judo","Taekwondo","Motociclismo","Automovilismo","Triatlón","Remo","Escalada","Esquí",
+    "Patinaje","Carreras de caballos","BMX","Lucha libre","Billar","Boliche","Golf Mini","Carreras de drones",
+    "Tiro con arco","Squash","Cricket","Esquí acuático","Parapente","Patinaje artístico","Kitesurf","Rally","Triatlón de invierno"
+  ],
+  Música: [
+    "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Techno","Clásica","Jazz","Hip-Hop",
+    "Blues","Country","Salsa","Bachata","Funk","Metal","R&B","Disco","House","Dubstep","K-Pop",
+    "Vocaloid","Folk","Opera","Grunge","Punk","Soul","Rap","Gospel","Reggae","Merengue","Ska",
+    "Bolero","Cumbia","Electro Swing","Trap Latino","Lo-fi","Indie"
+  ],
+  Series: [
+    "Breaking Bad","La Casa de Papel","Stranger Things","The Walking Dead","Vikingos","Friends","The Office",
+    "Rick y Morty","Adventure Time","Los Simpsons","Family Guy","How I Met Your Mother","Game of Thrones",
+    "Sherlock","Black Mirror","Dexter","The Mandalorian","The Witcher","Dark","Narcos","The Boys",
+    "Westworld","Peaky Blinders","Umbrella Academy","Loki","WandaVision","Lost","Grey's Anatomy",
+    "Prison Break","House","Smallville","Buffy","Supernatural"
+  ],
+  Videojuegos: [
+    "Fortnite","Minecraft","Call of Duty","GTA","FIFA","Zelda","Mario Bros","Pokémon","League of Legends",
+    "Among Us","Roblox","Overwatch","Apex Legends","Valorant","Assassin's Creed","Resident Evil","The Sims",
+    "Cyberpunk","God of War","Halo","Battlefield","Rocket League","Tetris","Street Fighter","Mortal Kombat",
+    "Animal Crossing","Final Fantasy","Metroid","Starcraft","Diablo","Call of Duty Warzone","Genshin Impact",
+    "Elden Ring","Fall Guys","Dead by Daylight","Overcooked"
+  ],
+  Películas: [
+    "Harry Potter","Star Wars","Avatar","Indiana Jones","Jurassic Park","El Señor de los Anillos","Matrix",
+    "The Avengers","Deadpool","Titanic","Spiderman","Iron Man","Hulk","Thor","Capitán América","Black Panther",
+    "Doctor Strange","Wonder Woman","Aquaman","Joker","Inception","Interstellar","Gladiator","Pirates of the Caribbean",
+    "Shrek","Toy Story","Frozen","Coco","The Lion King","Aladdin","Moana","Black Swan","La La Land","The Godfather"
+  ],
+  Animales: [
+    "Águilas","Leones","Tiburones","Dinosaurios","Gatos","Perros","Animales marinos","Elefantes","Jirafas",
+    "Tigres","Lobos","Serpientes","Rinocerontes","Hipopótamos","Orcas","Delfines","Peces tropicales","Cocodrilos",
+    "Osos","Zorros","Mapaches","Pingüinos","Canguros","Lémures","Nutrias","Búhos","Murciélagos","Caballos",
+    "Gorilas","Chimpancés","Conejos","Ardillas","Camaleones","Avestruz","Cisnes","Tortugas","Peces payaso"
+  ],
+  Ciencia: [
+    "Física","Química","Biología","Matemáticas","Astronomía","Genética","Ecología","Robótica","Inteligencia Artificial",
+    "Nanotecnología","Neurociencia","Ingeniería","Informática","Meteorología","Geología","Astrobiología","Psicología",
+    "Sociología","Antropología","Oceanografía","Química Orgánica","Química Inorgánica","Biotecnología","Astrofísica",
+    "Electrónica","Telecomunicaciones","Ingeniería Biomédica","Ingeniería Aeroespacial","Bioinformática","Cibernética","Microbiología"
+  ],
+  Arte: [
+    "Pintura","Escultura","Fotografía","Dibujo","Graffiti","Arquitectura","Diseño Gráfico","Arte Digital","Caligrafía",
+    "Cerámica","Origami","Collage","Performance","Arte Urbano","Diseño de Moda","Ilustración","Mosaico","Vidrieras",
+    "Tatuaje","Arte Conceptual","Grabado","Caricatura","Bordado","Arte Textil","Arte Interactivo","Street Art"
+  ],
+  Comida: [
+    "Pizza","Hamburguesa","Tacos","Sushi","Chocolate","Helado","Frutas","Verduras","Postres","Bebidas","Pasta",
+    "Risotto","Paella","Ceviche","Empanadas","Curry","Chili","Hot Dog","Panqueques","Waffles","Donuts",
+    "Bebidas energéticas","Smoothies","Sopas","Ensaladas","Mariscos","Quesos","Carnes asadas","Bollería","Tapas",
+    "Gelato","Café","Te","Bagels","Churros","Crepes","Fondue","Salsas","Snacks"
+  ],
+  Espacio: [
+    "Planetas","Estrellas","Agujeros negros","Cometas","Nebulosas","Galaxias","Astronautas","Telescopios",
+    "Meteoritos","Constelaciones","Satélites","Exploración espacial","Estación Espacial","Rovers","Exoplanetas",
+    "Supernovas","Agujeros de gusano","Materia oscura","Asteroides","Cinturón de Kuiper","Vía Láctea","Magnetosfera"
+  ],
+  Fantasía: [
+    "Dragones","Elfos","Orcos","Magos","Hadas","Vampiros","Zombies","Fénix","Unicornios","Sirenas","Gigantes",
+    "Enanos","Brujas","Demonios","Ángeles","Fantasma","Licántropos","Hobbits","Goblins","Genios","Espadas mágicas",
+    "Amuletos","Pociones","Hechizos","Criaturas mágicas","Reinos","Castillos","Runas","Encantamientos"
+  ],
+  Historia: [
+    "Egipto","Roma","Grecia","Mesopotamia","Edad Media","Renacimiento","Revolución Francesa","Guerras Mundiales",
+    "Imperio Bizantino","Vikingos","Incas","Mayas","Aztecas","China Antigua","Japón Feudal","Genghis Khan",
+    "Napoleón","Hitler","Lincoln","George Washington","Revoluciones","Imperios","Exploradores","Colonización","Guerras Civiles"
+  ],
+  Literatura: [
+    "Cien Años de Soledad","Don Quijote","Hamlet","Romeo y Julieta","Moby Dick","Orgullo y Prejuicio","El Principito",
+    "La Divina Comedia","Sherlock Holmes","Harry Potter","Percy Jackson","El Hobbit","El Señor de los Anillos",
+    "Juego de Tronos","Crónica de una Muerte Anunciada","Ficciones","1984","El Gran Gatsby","Crimen y Castigo","Macbeth"
+  ],
+  PersonajesFamosos: [
+    "Albert Einstein","Isaac Newton","Leonardo da Vinci","Galileo Galilei","Marie Curie","Frida Kahlo",
+    "Pablo Picasso","Vincent Van Gogh","William Shakespeare","J.K. Rowling","Oprah Winfrey","Elon Musk",
+    "Barack Obama","Nelson Mandela","Martin Luther King","Cristiano Ronaldo","Lionel Messi","Michael Jordan",
+    "Beyoncé","Taylor Swift","Brad Pitt","Angelina Jolie","Johnny Depp","Keanu Reeves","Rihanna","Ariana Grande",
+    "Shakira","David Beckham"
+  ],
+  Aleatorio: []
+};
+Object.keys(themes).forEach(k=>{if(k!=='Aleatorio') themes.Aleatorio.push(...themes[k]);});
 
-  // ---------- Temas (igual que el tuyo) ----------
-  const themes = {
-    Deportes:[ "Fútbol","Baloncesto","Tenis","Padel","Ciclismo","Boxeo","WWE","Natación","Atletismo","Golf" ],
-    Música:[ "Reggaetón","Trap","Flamenco","Rock","Pop","Electrónica","Jazz","Hip-Hop","Blues","Salsa" ],
-    Series:[ "Breaking Bad","La Casa de Papel","Stranger Things","Friends","The Office" ],
-    Videojuegos:[ "Fortnite","Minecraft","Call of Duty","GTA","FIFA","Zelda","Mario Bros","Pokémon","Among Us" ],
-    Películas:[ "Harry Potter","Star Wars","Avatar","Jurassic Park","El Señor de los Anillos" ],
-    Animales:[ "Gatos","Perros","Tiburones","Leones","Elefantes" ],
-    Famosos:[ "Cristiano Ronaldo","Lionel Messi","Shakira","Beyoncé","Taylor Swift" ],
-    Aleatorio:[]
-  };
-  Object.keys(themes).forEach(k => { if(k!=='Aleatorio') themes.Aleatorio.push(...themes[k]) });
+// ===== ELEMENTOS DOM =====
+const numPlayersSelect=document.getElementById('numPlayersSelect');
+const playerNamesDiv=document.getElementById('playerNames');
+const numImpostorsInput=document.getElementById('numImpostors');
+const categorySelect=document.getElementById('categorySelect');
+const customThemeDiv=document.getElementById('customThemeDiv');
+const customThemeInput=document.getElementById('customThemeInput');
+const startBtn=document.getElementById('startBtn');
+const resumeBtn=document.getElementById('resumeBtn');
+const nightModeBtn=document.getElementById('nightModeBtn');
+const setupDiv=document.getElementById('setup');
+const roleScreen=document.getElementById('roleScreen');
+const turnText=document.getElementById('turnText');
+const roleDisplay=document.getElementById('roleDisplay');
+const announceBtn=document.getElementById('announceBtn');
+const showRoleBtn=document.getElementById('showRoleBtn');
+const nextBtn=document.getElementById('nextBtn');
+const endBtn=document.getElementById('endBtn');
+const middleScreen=document.getElementById('middleScreen');
+const viewOrderBtn=document.getElementById('viewOrderBtn');
+const viewSummaryBtn=document.getElementById('viewSummaryBtn');
+const restartBtn=document.getElementById('restartBtn');
+const summaryScreen=document.getElementById('summaryScreen');
+const summaryList=document.getElementById('summaryList');
+const orderList=document.getElementById('orderList');
+const backToSetupBtn=document.getElementById('backToSetupBtn');
+const clearSaveBtn=document.getElementById('clearSaveBtn');
+const announceModal=document.getElementById('announceModal');
+const announceCard=document.getElementById('announceCard');
+const announceName=document.getElementById('announceName');
+const announceContinue=document.getElementById('announceContinue');
+const announceSkip=document.getElementById('announceSkip');
 
-  // ---------- Elementos ----------
-  const numPlayersSelect = document.getElementById('numPlayersSelect');
-  const playerNamesDiv = document.getElementById('playerNames');
-  const numImpostorsInput = document.getElementById('numImpostors');
-  const categorySelect = document.getElementById('categorySelect');
-  const customThemeDiv = document.getElementById('customThemeDiv');
-  const customThemeInput = document.getElementById('customThemeInput');
+// ===== ESTADO =====
+let players=[];
+let currentIndex=0;
+let currentTheme='';
+let order=[];
 
-  const startBtn = document.getElementById('startBtn');
-  const nightModeBtn = document.getElementById('nightModeBtn');
+// ===== CREAR SELECT JUGADORES =====
+for(let i=3;i<=20;i++){ const opt=document.createElement('option'); opt.value=i; opt.textContent=i+' jugadores'; numPlayersSelect.appendChild(opt);}
+numPlayersSelect.value=3;
 
-  const setupDiv = document.getElementById('setup');
-  const roleScreen = document.getElementById('roleScreen');
-  const turnText = document.getElementById('turnText');
-  const roleDisplay = document.getElementById('roleDisplay');
-  const showRoleBtn = document.getElementById('showRoleBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const endBtn = document.getElementById('endBtn');
+// ===== INPUTS DINÁMICOS =====
+function createPlayerInputs(){playerNamesDiv.innerHTML=''; const n=parseInt(numPlayersSelect.value)||6; for(let i=0;i<n;i++){const wrapper=document.createElement('div'); wrapper.className='player-card'; const input=document.createElement('input'); input.type='text'; input.id='player'+i; input.placeholder='Jugador '+(i+1); wrapper.appendChild(input); playerNamesDiv.appendChild(wrapper);}}
+createPlayerInputs(); numPlayersSelect.addEventListener('change',createPlayerInputs);
 
-  const summaryScreen = document.getElementById('summaryScreen');
-  const summaryList = document.getElementById('summaryList');
-  const restartBtn = document.getElementById('restartBtn');
+// ===== CUSTOM THEME =====
+categorySelect.addEventListener('change',()=>{customThemeDiv.style.display=(categorySelect.value==='Personalizado')?'block':'none';});
 
-  // ---------- Rellenar select de jugadores (3..20 por defecto) ----------
-  for(let i=3;i<=20;i++){
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = i + " jugadores";
-    numPlayersSelect.appendChild(opt);
-  }
-  // dejar valor por defecto 6 si quieres (opcional)
-  numPlayersSelect.value = 6;
-
-  // ---------- Función para crear inputs ----------
-  function createPlayerInputs(){
-    playerNamesDiv.innerHTML = '';
-    const n = parseInt(numPlayersSelect.value) || 6;
-    for(let i=0;i<n;i++){
-      const wrapper = document.createElement('div');
-      wrapper.className = 'player-card';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = 'player' + i;
-      input.placeholder = 'Jugador ' + (i+1);
-      wrapper.appendChild(input);
-      playerNamesDiv.appendChild(wrapper);
-    }
-  }
-  // inicial
-  createPlayerInputs();
-  numPlayersSelect.addEventListener('change', createPlayerInputs);
-
-  // ---------- Mostrar campo personalizado si corresponde ----------
-  categorySelect.addEventListener('change', ()=>{
-    if(categorySelect.value === 'Personalizado'){
-      customThemeDiv.style.display = 'block';
-    } else {
-      customThemeDiv.style.display = 'none';
-    }
-  });
-
-  // ---------- Modo noche ----------
-  nightModeBtn.addEventListener('click', ()=> document.body.classList.toggle('night'));
-
-  // ---------- Lógica del juego ----------
-  let players = [];
-  let currentIndex = 0;
-  let currentTheme = '';
-
-  startBtn.addEventListener('click', ()=> {
-    try {
-      // comprobar número jugadores
-      const numPlayers = parseInt(numPlayersSelect.value);
-      if(isNaN(numPlayers) || numPlayers < 1){
-        alert('Selecciona un número válido de jugadores.');
-        return;
-      }
-
-      const numImpostors = parseInt(numImpostorsInput.value) || 1;
-      if(numImpostors < 1){
-        alert('El número de impostores debe ser como mínimo 1.');
-        return;
-      }
-      if(numImpostors >= numPlayers){
-        alert('Los impostores no pueden ser iguales o más que los jugadores.');
-        return;
-      }
-
-      // crear jugadores (leer inputs). Si están vacíos, pongo "Jugador X" automáticamente.
-      players = [];
-      for(let i=0;i<numPlayers;i++){
-        const el = document.getElementById('player'+i);
-        const name = (el && el.value && el.value.trim()) ? el.value.trim() : `Jugador ${i+1}`;
-        players.push({ name, isImpostor: false, theme: '' });
-      }
-
-      // mezclar jugadores (aleatorio)
-      players.sort(()=> Math.random() - 0.5);
-
-      // asignar impostores al azar
-      let assigned = 0;
-      while(assigned < numImpostors){
-        const idx = Math.floor(Math.random() * players.length);
-        if(!players[idx].isImpostor){
-          players[idx].isImpostor = true;
-          assigned++;
-        }
-      }
-
-      // seleccionar tema
-      let category = categorySelect.value;
-      if(category === 'Personalizado'){
-        const val = (customThemeInput.value || '').trim();
-        if(!val){
-          alert('Escribe un tema personalizado o elige otra categoría.');
-          return;
-        }
-        currentTheme = val;
-      } else {
-        const list = themes[category] || themes.Aleatorio;
-        currentTheme = list[Math.floor(Math.random() * list.length)];
-      }
-      // aplicar tema a ciudadanos
-      players.forEach(p => { if(!p.isImpostor) p.theme = currentTheme });
-
-      // pasar a pantalla de roles
-      setupDiv.style.display = 'none';
-      roleScreen.style.display = 'block';
-      currentIndex = 0;
-      updateTurn();
-      console.log('Partida iniciada', { numPlayers, numImpostors, currentTheme, players });
-    } catch (err){
-      console.error('Error al empezar partida:', err);
-      alert('Ha ocurrido un error. Mira la consola (F12) y pégame el error si sigue sin ir.');
-    }
-  });
-
-  function updateTurn(){
-    if(!players || players.length === 0){
-      alert('No hay jugadores. Reinicia la página.');
-      return;
-    }
-    // ocultar rol hasta que se muestre
-    roleDisplay.style.display = 'none';
-    roleDisplay.classList.remove('show');
-    showRoleBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'none';
-    turnText.innerText = `Turno de ${players[currentIndex].name}`;
-  }
-
-  showRoleBtn.addEventListener('click', ()=>{
-    const p = players[currentIndex];
-    roleDisplay.style.display = 'block';
-    roleDisplay.classList.remove('show');
-    // pequeña animación con timeout para simular efecto
-    setTimeout(()=> {
-      roleDisplay.innerText = p.isImpostor ? 'IMPOSTOR' : `Tu tema: ${p.theme}`;
-      roleDisplay.classList.add('show');
-    }, 60);
-    showRoleBtn.style.display = 'none';
-    nextBtn.style.display = 'inline-block';
-  });
-
-  nextBtn.addEventListener('click', ()=>{
-    currentIndex++;
-    if(currentIndex < players.length){
-      updateTurn();
-      // scroll arriba para móviles
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      showSummary();
-    }
-  });
-
-  function showSummary(){
-    roleScreen.style.display = 'none';
-    summaryScreen.style.display = 'block';
-    summaryList.innerHTML = '';
-    players.forEach(p=>{
-      const li = document.createElement('li');
-      li.textContent = `${p.name} — ${p.isImpostor ? 'IMPOSTOR' : p.theme}`;
-      if(p.isImpostor) li.style.color = '#c82333';
-      summaryList.appendChild(li);
-    });
-  }
-
-  endBtn.addEventListener('click', ()=> location.reload());
-  restartBtn.addEventListener('click', ()=> location.reload());
-
-  // DEBUG: si algo no funciona, se verá en consola.
-  console.log('%c Script cargado: Juego del Impostor (corregido)', 'color:green;font-weight:700');
+// ===== MODO NOCHE =====
+nightModeBtn.addEventListener('click',()=>document.body.classList.toggle('night'));
+// ===== VOLVER A LA PANTALLA INTERMEDIA DESDE ORDEN DE TURNO =====
+const backToMiddleBtn = document.getElementById('backToMiddleBtn');
+backToMiddleBtn.addEventListener('click', () => {
+  summaryScreen.style.display = 'none';
+  middleScreen.style.display = 'block';
 });
+
+// ===== LOCALSTORAGE =====
+const STORAGE_KEY='impostor_game_save_v1';
+function saveGame(){try{const data={players,currentIndex,currentTheme,order,timestamp:Date.now()}; localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){console.warn('No se pudo guardar',e);}}
+function loadGame(){try{const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return null; return JSON.parse(raw);}catch(e){console.warn('Error leyendo',e); return null;}}
+function clearSave(){localStorage.removeItem(STORAGE_KEY);}
+if(loadGame()) resumeBtn.style.display='inline-block';
+
+// ===== INICIAR PARTIDA =====
+startBtn.addEventListener('click',()=>{
+  const numPlayers=parseInt(numPlayersSelect.value); if(isNaN(numPlayers)||numPlayers<1){alert('Selecciona un número válido de jugadores.'); return;}
+  const numImpostors=parseInt(numImpostorsInput.value)||1;
+  if(numImpostors<1){alert('Número de impostores mínimo 1'); return;}
+  if(numImpostors>=numPlayers){alert('Impostores no pueden ser iguales o mayores que jugadores'); return;}
+
+  players=[]; for(let i=0;i<numPlayers;i++){ const el=document.getElementById('player'+i); const name=(el&&el.value.trim())?el.value.trim():`Jugador ${i+1}`; players.push({name,isImpostor:false,theme:''}); }
+  players.sort(()=>Math.random()-0.5);
+  let assigned=0; while(assigned<numImpostors){ const idx=Math.floor(Math.random()*players.length); if(!players[idx].isImpostor){players[idx].isImpostor=true; assigned++;}}
+  let category=categorySelect.value;
+  if(category==='Personalizado'){ const val=(customThemeInput.value||'').trim(); if(!val){alert('Escribe un tema personalizado o elige otra categoría.'); return;} currentTheme=val; } 
+  else { const list=themes[category]||themes.Aleatorio; currentTheme=list[Math.floor(Math.random()*list.length)]; }
+  players.forEach(p=>{if(!p.isImpostor)p.theme=currentTheme;});
+  order=Array.from({length:players.length},(_,i)=>i); order.sort(()=>Math.random()-0.5);
+  currentIndex=0; saveGame(); setupDiv.style.display='none'; roleScreen.style.display='block'; updateTurn();
+});
+
+// ===== REANUDAR =====
+resumeBtn.addEventListener('click', () => {
+  const g = loadGame();
+  if (!g) {
+    alert('No hay partida guardada');
+    resumeBtn.style.display = 'none';
+    return;
+  }
+
+  // Restaurar estado
+  players = g.players || [];
+  currentIndex = g.currentIndex || 0;
+  currentTheme = g.currentTheme || '';
+  order = g.order || Array.from({ length: players.length }, (_, i) => i);
+
+  // Asignar tema a jugadores que no sean impostores
+  players.forEach(p => { if (!p.isImpostor) p.theme = currentTheme; });
+
+  // Ocultar setup y mostrar pantalla de rol
+  setupDiv.style.display = 'none';
+  roleScreen.style.display = 'block';
+
+  // Actualizar botones según índice
+  if (currentIndex >= players.length) {
+    // Partida ya terminada
+    roleScreen.style.display = 'none';
+    middleScreen.style.display = 'block';
+    renderSummary();
+  } else {
+    // Partida en curso
+    updateTurn();
+  }
+});
+
+
+// ===== FUNCIONES =====
+function updateTurn() {
+  // actualizar texto turno
+  turnText.textContent = `Turno: ${players[order[currentIndex]].name}`;
+  
+  // reset pantalla
+  roleDisplay.textContent = '';
+  roleDisplay.classList.remove('show');
+
+  // mostrar botón anunciar
+  announceBtn.style.display = 'inline-block';
+  showRoleBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+}
+
+// ANUNCIAR TURNO
+announceBtn.addEventListener('click', () => {
+  announceName.textContent = players[order[currentIndex]].name;
+  announceModal.style.display = 'flex';
+  setTimeout(() => announceCard.classList.add('show'), 50);
+});
+
+// CONTINUAR ANUNCIO: mostrar rol directamente + siguiente
+announceContinue.addEventListener('click', () => {
+  announceModal.style.display = 'none';
+  announceCard.classList.remove('show');
+
+  const p = players[order[currentIndex]];
+  roleDisplay.textContent = p.isImpostor ? 'IMPOSTOR' : p.theme;
+  roleDisplay.classList.add('show');
+
+  announceBtn.style.display = 'none';
+  nextBtn.style.display = 'inline-block'; // ya aparece "Siguiente turno"
+});
+
+// SIGUIENTE JUGADOR
+nextBtn.addEventListener('click', () => {
+  currentIndex++; // pasar al siguiente jugador
+  if (currentIndex >= players.length) {
+    // último jugador: mostrar pantalla intermedia
+    roleScreen.style.display = 'none';
+    middleScreen.style.display = 'block';
+    renderSummary();
+    saveGame();
+    return;
+  }
+  updateTurn(); // reset pantalla y mostrar siguiente turno
+});
+// ===== MIDDLE SCREEN =====
+viewOrderBtn.addEventListener('click', ()=>{
+  orderList.innerHTML=''; summaryList.innerHTML='';
+  order.forEach((playerIdx,pos)=>{const li=document.createElement('li'); li.textContent=`${pos+1}. ${players[playerIdx].name}`; orderList.appendChild(li);});
+  middleScreen.style.display='none'; summaryScreen.style.display='block';
+});
+
+viewSummaryBtn.addEventListener('click',()=>{renderSummary(); middleScreen.style.display='none'; summaryScreen.style.display='block';});
+
+restartBtn.addEventListener('click', ()=>{
+  // Creamos un modal simple con confirmaciones
+  const choice = confirm('¿Quieres mantener los nombres de la última partida? Pulsa Aceptar para mantenerlos, Cancelar para empezar desde 0.');
+  
+  if(choice){
+    // Opción 1: Mantener nombres
+    const names = [];
+    const numPlayers = parseInt(numPlayersSelect.value);
+    for(let i=0;i<numPlayers;i++){
+      const el = document.getElementById('player'+i);
+      names.push(el.value.trim() || `Jugador ${i+1}`);
+    }
+    localStorage.setItem('impostor_last_names', JSON.stringify(names));
+
+    // Limpiar el resto de la partida
+    clearSave();
+    currentIndex = 0;
+    players = [];
+    order = [];
+    setupDiv.style.display = 'block';
+    roleScreen.style.display = 'none';
+    middleScreen.style.display = 'none';
+    summaryScreen.style.display = 'none';
+    createPlayerInputs(); // recrear inputs
+
+    // Rellenar con nombres guardados
+    const savedNames = JSON.parse(localStorage.getItem('impostor_last_names') || '[]');
+    savedNames.forEach((n,i)=>{
+      const el = document.getElementById('player'+i);
+      if(el) el.value = n;
+    });
+  } else {
+    // Opción 2: Empezar desde cero
+    clearSave();
+    localStorage.removeItem('impostor_last_names'); // borrar nombres guardados
+    currentIndex = 0;
+    players = [];
+    order = [];
+    setupDiv.style.display = 'block';
+    roleScreen.style.display = 'none';
+    middleScreen.style.display = 'none';
+    summaryScreen.style.display = 'none';
+    createPlayerInputs(); // inputs vacíos
+  }
+});
+// ===== RENDERIZAR RESUMEN =====
+function renderSummary(){
+  summaryList.innerHTML=''; players.forEach(p=>{const li=document.createElement('li'); li.textContent=`${p.name} — ${p.isImpostor?'IMPOSTOR':p.theme}`; if(p.isImpostor) li.classList.add('impostor'); summaryList.appendChild(li);});
+  orderList.innerHTML=''; order.forEach((idx,pos)=>{const li=document.createElement('li'); li.textContent=`${pos+1}. ${players[idx].name}`; orderList.appendChild(li);});
+  saveGame();
+}
+
+// ===== BOTONES RESUMEN =====
+backToSetupBtn.addEventListener('click',()=>{summaryScreen.style.display='none'; setupDiv.style.display='block';});
+clearSaveBtn.addEventListener('click',()=>{clearSave(); alert('Guardado borrado');});
 </script>
 </body>
 </html>
