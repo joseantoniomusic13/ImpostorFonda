@@ -95,6 +95,18 @@ body.night input, body.night select{
   font-size:15px;
   transition:transform 0.2s,box-shadow 0.2s;
 }
+
+/* Toggle visual para 'Activar pistas' */
+.switch-wrapper{position:relative;width:56px;height:32px;flex:0 0 auto}
+.toggle-checkbox{position:absolute;opacity:0;width:0;height:0}
+.toggle-slider{position:relative;display:inline-block;width:56px;height:32px;border-radius:999px;background:linear-gradient(90deg,#e6e6e6,#cfcfcf);transition:background .25s,box-shadow .2s}
+.toggle-slider::before{content:'';position:absolute;left:4px;top:4px;width:24px;height:24px;background:#fff;border-radius:50%;transition:transform .25s,box-shadow .2s;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+.toggle-checkbox:checked + .toggle-slider{background:linear-gradient(90deg,#ffd54d,#ff7043);box-shadow:0 10px 24px rgba(255,112,67,0.12)}
+.toggle-checkbox:checked + .toggle-slider::before{transform:translateX(24px);box-shadow:0 8px 22px rgba(0,0,0,0.12)}
+.toggle-checkbox:focus + .toggle-slider{box-shadow:0 0 0 6px rgba(59,130,246,0.08)}
+body.night .toggle-slider{background:linear-gradient(90deg,#3a3a4a,#515151)}
+body.night .toggle-checkbox:checked + .toggle-slider{background:linear-gradient(90deg,#34d399,#10b981)}
+
 .main-btn{
   background:linear-gradient(135deg,#34d399,#10b981);
   color:#fff;
@@ -265,7 +277,7 @@ body.night .hint, body.night .small{color:#bbb;}
           <option value="Fantasía">Fantasía</option>
           <option value="Historia">Historia</option>
           <option value="Literatura">Literatura</option>
-          <option value="Famosos">Personajes Famosos</option>
+          <option value="PersonajesFamosos">Personajes Famosos</option>
           <option value="Aleatorio">Aleatorio</option>
           <option value="Personalizado">Escribir tema</option>
         </select>
@@ -275,6 +287,20 @@ body.night .hint, body.night .small{color:#bbb;}
     <div id="customThemeDiv" style="display:none;margin-top:10px">
       <label for="customThemeInput">Escribe tu tema:</label>
       <input id="customThemeInput" type="text" placeholder="Tema personalizado (ej. Frutas raras)">
+    </div>
+
+    <!-- Checkbox convertido en toggle visual para activar pistas -->
+    <div style="margin-top:10px">
+      <label style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
+        <div style="text-align:left;flex:1">
+          <div style="font-weight:700">Activar pistas para el impostor</div>
+          <div class="small hint">Muestra pistas sutiles cuando sea aplicable</div>
+        </div>
+        <div class="switch-wrapper">
+          <input type="checkbox" id="enableHints" class="toggle-checkbox">
+          <span class="toggle-slider"></span>
+        </div>
+      </label>
     </div>
 
     <div class="controls" style="margin-top:12px">
@@ -422,6 +448,122 @@ const themes = {
 };
 Object.keys(themes).forEach(k=>{if(k!=='Aleatorio') themes.Aleatorio.push(...themes[k]);});
 
+// ===== PISTAS (ULTRA CORTAS) =====
+// Añade aquí o edita las pistas por palabra. Las claves deben coincidir exactamente con la palabra seleccionada.
+const pistas = {
+    // Deportes
+  "Fútbol": "amarilla","Baloncesto": "pasos","Tenis": "saque","Padel": "pared","Ciclismo": "pedal",
+  "Boxeo": "guantes","WWE": "ring","Natación": "braza","Atletismo": "maratón","Golf": "putt",
+  "Esgrima": "estocada","Rugby": "placaje","Hockey": "stick","Skate": "rampa","Snowboard": "nieve",
+  "Surf": "ola","Paracaidismo": "salto","Voleibol": "remate","Ping Pong": "pelota","Karate": "kata",
+  "Judo": "tatami","Taekwondo": "patada","Motociclismo": "acelerador","Automovilismo": "curva","Triatlón": "transición",
+  "Remo": "canoa","Escalada": "agarre","Esquí": "eslalon","Patinaje": "giro","Carreras de caballos": "jinete",
+  "BMX": "trucos","Lucha libre": "llave","Billar": "taco","Boliche": "bolos","Golf Mini": "hoyo",
+  "Carreras de drones": "vuelo","Tiro con arco": "blanco","Squash": "rebote","Cricket": "bate","Esquí acuático": "cuerda",
+  "Parapente": "corriente","Patinaje artístico": "pirueta","Kitesurf": "cometa","Rally": "tramo","Triatlón de invierno": "nieve",
+  // Música
+  "Reggaetón": "ritmo","Trap": "flow","Flamenco": "palmas","Rock": "guitarra","Pop": "hits",
+  "Electrónica": "beats","Techno": "sintetizador","Clásica": "orquesta","Jazz": "improvisación","Hip-Hop": "rap",
+  "Blues": "alma","Country": "vaquero","Salsa": "baile","Bachata": "pareja","Funk": "groove",
+  "Metal": "distorsión","R&B": "suave","Disco": "bola","House": "club","Dubstep": "drop",
+  "K-Pop": "coreografía","Vocaloid": "voz","Folk": "tradición","Opera": "tenor","Grunge": "gritar",
+  "Punk": "rebeldía","Soul": "corazón","Rap": "verso","Gospel": "coro","Reggae": "rasta",
+  "Merengue": "cadera","Ska": "brass","Bolero": "romance","Cumbia": "ritmo","Electro Swing": "baile",
+  "Trap Latino": "flow","Lo-fi": "relax","Indie": "alternativo",
+  // Series
+  "Breaking Bad": "metanfetamina","La Casa de Papel": "máscara","Stranger Things": "upside","The Walking Dead": "zombi",
+  "Vikingos": "drakkar","Friends": "sofá","The Office": "oficina","Rick y Morty": "portal","Adventure Time": "hielo",
+  "Los Simpsons": "donuts","Family Guy": "griffin","How I Met Your Mother": "bar","Game of Thrones": "trono","Sherlock": "detective",
+  "Black Mirror": "pantalla","Dexter": "cuchillo","The Mandalorian": "bebé","The Witcher": "monstruo","Dark": "tiempo",
+  "Narcos": "cocaína","The Boys": "vigilantes","Westworld": "androides","Peaky Blinders": "gorra","Umbrella Academy": "paraguas",
+  "Loki": "astucia","WandaVision": "hechizo","Lost": "isla","Grey's Anatomy": "quirófano","Prison Break": "fuga",
+  "House": "diagnóstico","Smallville": "kriptonita","Buffy": "vampiro","Supernatural": "caza",
+  // Videojuegos
+  "Fortnite": "construcción","Minecraft": "bloques","Call of Duty": "soldado","GTA": "crimen","FIFA": "gol",
+  "Zelda": "espada","Mario Bros": "tubo","Pokémon": "pokebola","League of Legends": "liga","Among Us": "impostor",
+  "Roblox": "avatar","Overwatch": "objetivo","Apex Legends": "leyenda","Valorant": "agente","Assassin's Creed": "sigilo",
+  "Resident Evil": "zombi","The Sims": "hogar","Cyberpunk": "neón","God of War": "kratos","Halo": "halo",
+  "Battlefield": "tanque","Rocket League": "coches","Tetris": "piezas","Street Fighter": "puño","Mortal Kombat": "fatality",
+  "Animal Crossing": "aldea","Final Fantasy": "cristal","Metroid": "bicho","Starcraft": "estrategia","Diablo": "demonio",
+  "Call of Duty Warzone": "battle","Genshin Impact": "elemento","Elden Ring": "anillo","Fall Guys": "obstáculo","Dead by Daylight": "superviviente",
+  "Overcooked": "cocina",
+  // Películas
+  "Harry Potter": "varita","Star Wars": "sables","Avatar": "pandora","Indiana Jones": "sombrero","Jurassic Park": "dinosaurio",
+  "El Señor de los Anillos": "anillo","Matrix": "neón","The Avengers": "héroes","Deadpool": "sarcasmo","Titanic": "iceberg",
+  "Spiderman": "telaraña","Iron Man": "armadura","Hulk": "fuerza","Thor": "martillo","Capitán América": "escudo",
+  "Black Panther": "wakanda","Doctor Strange": "magia","Wonder Woman": "lazo","Aquaman": "tridente","Joker": "payaso",
+  "Inception": "sueño","Interstellar": "espacio","Gladiator": "arena","Pirates of the Caribbean": "barco","Shrek": "pantano",
+  "Toy Story": "juguete","Frozen": "hielo","Coco": "música","The Lion King": "reino","Aladdin": "alfombra",
+  "Moana": "oceano","Black Swan": "cisne","La La Land": "baile","The Godfather": "mafioso",
+  // Animales
+  "Águilas": "plumas","Leones": "melena","Tiburones": "dientes","Dinosaurios": "prehistoria","Gatos": "bigotes",
+  "Perros": "ladrido","Animales marinos": "coral","Elefantes": "trompa","Jirafas": "cuello","Tigres": "rayas",
+  "Lobos": "manada","Serpientes": "veneno","Rinocerontes": "cuerno","Hipopótamos": "río","Orcas": "orca",
+  "Delfines": "inteligencia","Peces tropicales": "color","Cocodrilos": "mordida","Osos": "hibernación","Zorros": "astucia",
+  "Mapaches": "mascara","Pingüinos": "frío","Canguros": "bolsa","Lémures": "cola","Nutrias": "agua",
+  "Búhos": "nocturno","Murciélagos": "eco","Caballos": "crin","Gorilas": "fuerza","Chimpancés": "árbol",
+  "Conejos": "orejas","Ardillas": "nuez","Camaleones": "color","Avestruz": "correr","Cisnes": "gracia",
+  "Tortugas": "caparazón","Peces payaso": "anémona",
+   // Ciencia
+  "Física": "energía","Química": "átomo","Biología": "célula","Matemáticas": "número","Astronomía": "estrella",
+  "Genética": "ADN","Ecología": "hábitat","Robótica": "robot","Inteligencia Artificial": "algoritmo","Nanotecnología": "nano",
+  "Neurociencia": "neurona","Ingeniería": "proyecto","Informática": "código","Meteorología": "clima","Geología": "roca",
+  "Astrobiología": "vida","Psicología": "mente","Sociología": "sociedad","Antropología": "cultura","Oceanografía": "océano",
+  "Química Orgánica": "carbono","Química Inorgánica": "minerales","Biotecnología": "ingeniería","Astrofísica": "galaxia",
+  "Electrónica": "circuito","Telecomunicaciones": "señal","Ingeniería Biomédica": "órgano","Ingeniería Aeroespacial": "cohete",
+  "Bioinformática": "dato","Cibernética": "control","Microbiología": "microbio",
+  // Arte
+  "Pintura": "lienzo","Escultura": "piedra","Fotografía": "lente","Dibujo": "lápiz","Graffiti": "spray",
+  "Arquitectura": "plano","Diseño Gráfico": "vector","Arte Digital": "pixel","Caligrafía": "trazo","Cerámica": "arcilla",
+  "Origami": "plegado","Collage": "recorte","Performance": "escena","Arte Urbano": "calle","Diseño de Moda": "tela",
+  "Ilustración": "boceto","Mosaico": "azulejo","Vidrieras": "cristal","Tatuaje": "tinta","Arte Conceptual": "idea",
+  "Grabado": "plancha","Caricatura": "humor","Bordado": "hilo","Arte Textil": "tejido","Arte Interactivo": "sensor",
+  "Street Art": "murales",
+  // Comida
+  "Pizza": "queso","Hamburguesa": "carne","Tacos": "maíz","Sushi": "alga","Chocolate": "cacao",
+  "Helado": "crema","Frutas": "dulce","Verduras": "verde","Postres": "azúcar","Bebidas": "refresco",
+  "Pasta": "fideos","Risotto": "arroz","Paella": "mariscos","Ceviche": "limón","Empanadas": "relleno",
+  "Curry": "especia","Chili": "picante","Hot Dog": "salchicha","Panqueques": "miel","Waffles": "miel",
+  "Donuts": "glaseado","Bebidas energéticas": "cafeína","Smoothies": "batido","Sopas": "caldo","Ensaladas": "hojas",
+  "Mariscos": "ostra","Quesos": "leche","Carnes asadas": "parrilla","Bollería": "azúcar","Tapas": "picoteo",
+  "Gelato": "cremoso","Café": "taza","Te": "hoja","Bagels": "pan","Churros": "canela",
+  "Crepes": "relleno","Fondue": "queso","Salsas": "tomate","Snacks": "crujiente",
+  // Espacio
+  "Planetas": "órbita","Estrellas": "luz","Agujeros negros": "gravedad","Cometas": "cola","Nebulosas": "gas",
+  "Galaxias": "espiral","Astronautas": "traje","Telescopios": "lente","Meteoritos": "impacto","Constelaciones": "figura",
+  "Satélites": "órbita","Exploración espacial": "misión","Estación Espacial": "módulo","Rovers": "rover","Exoplanetas": "lejanía",
+  "Supernovas": "explosión","Agujeros de gusano": "atajo","Materia oscura": "invisible","Asteroides": "roca","Cinturón de Kuiper": "cinturón",
+  "Vía Láctea": "galaxia","Magnetosfera": "campo",
+  // Fantasía
+  "Dragones": "fuego","Elfos": "orejas","Orcos": "hacha","Magos": "varita","Hadas": "polvo",
+  "Vampiros": "colmillo","Zombies": "cadáver","Fénix": "renacer","Unicornios": "cuerno","Sirenas": "canto",
+  "Gigantes": "altura","Enanos": "barba","Brujas": "escoba","Demonios": "mal","Ángeles": "halo",
+  "Fantasma": "aparición","Licántropos": "luna","Hobbits": "pies","Goblins": "tesoro","Genios": "lámpara",
+  "Espadas mágicas": "acero","Amuletos": "protección","Pociones": "brebaje","Hechizos": "magia","Criaturas mágicas": "misterio",
+  "Reinos": "castillo","Castillos": "torre","Runas": "símbolo","Encantamientos": "hechizo",
+  // Historia
+  "Egipto": "pirámide","Roma": "coliseo","Grecia": "acropolis","Mesopotamia": "río","Edad Media": "castillo",
+  "Renacimiento": "arte","Revolución Francesa": "guillotina","Guerras Mundiales": "batalla","Imperio Bizantino": "cúpula","Vikingos": "drakkar",
+  "Incas": "machu","Mayas": "calendario","Aztecas": "templo","China Antigua": "muralla","Japón Feudal": "samurái",
+  "Genghis Khan": "imperio","Napoleón": "sombrero","Hitler": "dictador","Lincoln": "presidente","George Washington": "independencia",
+  "Revoluciones": "rebelión","Imperios": "trono","Exploradores": "brújula","Colonización": "tierra","Guerras Civiles": "batalla",
+  // Literatura
+  "Cien Años de Soledad": "Macondo","Don Quijote": "molino","Hamlet": "fantasma","Romeo y Julieta": "balcón",
+  "Moby Dick": "ballena","Orgullo y Prejuicio": "sociedad","El Principito": "rosa","La Divina Comedia": "infierno",
+  "Sherlock Holmes": "detective","Harry Potter": "varita","Percy Jackson": "dios","El Hobbit": "anor","El Señor de los Anillos": "anillo",
+  "Juego de Tronos": "dragón","Crónica de una Muerte Anunciada": "asesinato","Ficciones": "relato","1984": "orwell","El Gran Gatsby": "fiesta",
+  "Crimen y Castigo": "prisión","Macbeth": "ambición",
+  // PersonajesFamosos
+  "Albert Einstein": "relatividad","Isaac Newton": "manzana","Leonardo da Vinci": "mona","Galileo Galilei": "telescopio","Marie Curie": "radio",
+  "Frida Kahlo": "ceja","Pablo Picasso": "cubismo","Vincent Van Gogh": "oreja","William Shakespeare": "teatro","J.K. Rowling": "magia",
+  "Oprah Winfrey": "entrevista","Elon Musk": "cohete","Barack Obama": "presidente","Nelson Mandela": "libertad","Martin Luther King": "discursos",
+  "Cristiano Ronaldo": "gol","Lionel Messi": "dribbling","Michael Jordan": "aire","Beyoncé": "coro","Taylor Swift": "gira",
+  "Brad Pitt": "cine","Angelina Jolie": "acción","Johnny Depp": "pirata","Keanu Reeves": "matrix","Rihanna": "voz",
+  "Ariana Grande": "nota","Shakira": "cadera","David Beckham": "faltas"
+};
+// Cargar pistas personalizadas desde localStorage y mezclarlas
+// (No se cargan pistas personalizadas desde UI — solo uso interno)
+
 // ===== ELEMENTOS DOM =====
 const numPlayersSelect=document.getElementById('numPlayersSelect');
 const playerNamesDiv=document.getElementById('playerNames');
@@ -454,6 +596,8 @@ const announceCard=document.getElementById('announceCard');
 const announceName=document.getElementById('announceName');
 const announceContinue=document.getElementById('announceContinue');
 const announceSkip=document.getElementById('announceSkip');
+const enableHintsCheckbox = document.getElementById('enableHints');
+// (No hay elementos del modal de pistas — UI reducida a toggle)
 
 // ===== ESTADO =====
 let players=[];
@@ -462,15 +606,32 @@ let currentTheme='';
 let order=[];
 
 // ===== CREAR SELECT JUGADORES =====
-for(let i=3;i<=20;i++){ const opt=document.createElement('option'); opt.value=i; opt.textContent=i+' jugadores'; numPlayersSelect.appendChild(opt);}
+for(let i=3;i<=20;i++){ const opt=document.createElement('option'); opt.value=i; opt.textContent=i+' jugadores'; numPlayersSelect.appendChild(opt);} 
 numPlayersSelect.value=3;
 
 // ===== INPUTS DINÁMICOS =====
-function createPlayerInputs(){playerNamesDiv.innerHTML=''; const n=parseInt(numPlayersSelect.value)||6; for(let i=0;i<n;i++){const wrapper=document.createElement('div'); wrapper.className='player-card'; const input=document.createElement('input'); input.type='text'; input.id='player'+i; input.placeholder='Jugador '+(i+1); wrapper.appendChild(input); playerNamesDiv.appendChild(wrapper);}}
-createPlayerInputs(); numPlayersSelect.addEventListener('change',createPlayerInputs);
+function createPlayerInputs() {
+  playerNamesDiv.innerHTML = '';
+  const n = parseInt(numPlayersSelect.value) || 6;
+  for (let i = 0; i < n; i++) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'player-card';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'player' + i;
+    input.placeholder = 'Jugador ' + (i + 1);
+    wrapper.appendChild(input);
+    playerNamesDiv.appendChild(wrapper);
+  }
+}
+createPlayerInputs();
+numPlayersSelect.addEventListener('change', createPlayerInputs);
+
 
 // ===== CUSTOM THEME =====
-categorySelect.addEventListener('change',()=>{customThemeDiv.style.display=(categorySelect.value==='Personalizado')?'block':'none';});
+categorySelect.addEventListener('change', () => {
+  customThemeDiv.style.display = (categorySelect.value === 'Personalizado') ? 'block' : 'none';
+});
 
 // ===== MODO NOCHE =====
 nightModeBtn.addEventListener('click',()=>document.body.classList.toggle('night'));
@@ -482,18 +643,21 @@ backToMiddleBtn.addEventListener('click', () => {
 });
 
 // ===== LOCALSTORAGE =====
-const STORAGE_KEY='impostor_game_save_v1';
-function saveGame(){try{const data={players,currentIndex,currentTheme,order,timestamp:Date.now()}; localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){console.warn('No se pudo guardar',e);}}
-function loadGame(){try{const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return null; return JSON.parse(raw);}catch(e){console.warn('Error leyendo',e); return null;}}
+const STORAGE_KEY = 'impostor_game_save_v1';
+function saveGame(){try{const data={players,currentIndex,currentTheme,order,timestamp:Date.now()}; localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){console.warn('No se pudo guardar',e);} }
+function loadGame(){try{const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return null; return JSON.parse(raw);}catch(e){console.warn('Error leyendo',e); return null;} }
 function clearSave(){localStorage.removeItem(STORAGE_KEY);}
 if(loadGame()) resumeBtn.style.display='inline-block';
 
 // ===== INICIAR PARTIDA =====
-startBtn.addEventListener('click',()=>{
-  const numPlayers=parseInt(numPlayersSelect.value); if(isNaN(numPlayers)||numPlayers<1){alert('Selecciona un número válido de jugadores.'); return;}
-  const numImpostors=parseInt(numImpostorsInput.value)||1;
-  if(numImpostors<1){alert('Número de impostores mínimo 1'); return;}
-  if(numImpostors>=numPlayers){alert('Impostores no pueden ser iguales o mayores que jugadores'); return;}
+startBtn.addEventListener('click', () => {
+  const numPlayers = parseInt(numPlayersSelect.value);
+  if (isNaN(numPlayers) || numPlayers < 1) { alert('Selecciona un número válido de jugadores.'); return; }
+
+  const rawImpostors = numImpostorsInput.value;
+  const numImpostors = Number(rawImpostors);
+  if (!Number.isInteger(numImpostors) || numImpostors < 1) { alert('Número de impostores debe ser un entero mayor o igual a 1'); return; }
+  if (numImpostors >= numPlayers) { alert('Impostores no pueden ser iguales o mayores que jugadores'); return; }
 
   players=[]; for(let i=0;i<numPlayers;i++){ const el=document.getElementById('player'+i); const name=(el&&el.value.trim())?el.value.trim():`Jugador ${i+1}`; players.push({name,isImpostor:false,theme:''}); }
   players.sort(()=>Math.random()-0.5);
@@ -569,12 +733,27 @@ announceContinue.addEventListener('click', () => {
   announceCard.classList.remove('show');
 
   const p = players[order[currentIndex]];
-  roleDisplay.textContent = p.isImpostor ? 'IMPOSTOR' : p.theme;
+  // Si es impostor, mostramos 'IMPOSTOR' y (si está activado) una pista sutil
+  if (p.isImpostor) {
+    if (enableHintsCheckbox && enableHintsCheckbox.checked) {
+      // usamos currentTheme para buscar la pista asociada a la palabra elegida
+      const hint = pistas[currentTheme] || '';
+      roleDisplay.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;"><strong>IMPOSTOR</strong><span class="hint" style="margin-top:8px">Pista: ${hint}</span></div>`;
+    } else {
+      roleDisplay.textContent = 'IMPOSTOR';
+    }
+  } else {
+    // jugador normal ve su tema
+    roleDisplay.textContent = p.theme;
+  }
+
   roleDisplay.classList.add('show');
 
   announceBtn.style.display = 'none';
   nextBtn.style.display = 'inline-block'; // ya aparece "Siguiente turno"
 });
+
+// (Eventos del modal eliminados — la UI ahora solo tiene un toggle estilizado)
 
 // SIGUIENTE JUGADOR
 nextBtn.addEventListener('click', () => {
@@ -598,17 +777,17 @@ viewOrderBtn.addEventListener('click', ()=>{
 
 viewSummaryBtn.addEventListener('click',()=>{renderSummary(); middleScreen.style.display='none'; summaryScreen.style.display='block';});
 
-restartBtn.addEventListener('click', ()=>{
+restartBtn.addEventListener('click', () => {
   // Creamos un modal simple con confirmaciones
   const choice = confirm('¿Quieres mantener los nombres de la última partida? Pulsa Aceptar para mantenerlos, Cancelar para empezar desde 0.');
   
   if(choice){
     // Opción 1: Mantener nombres
     const names = [];
-    const numPlayers = parseInt(numPlayersSelect.value);
-    for(let i=0;i<numPlayers;i++){
-      const el = document.getElementById('player'+i);
-      names.push(el.value.trim() || `Jugador ${i+1}`);
+    const numPlayers = document.querySelectorAll('#playerNames input').length || parseInt(numPlayersSelect.value);
+    for (let i = 0; i < numPlayers; i++) {
+      const el = document.getElementById('player' + i);
+      names.push((el && el.value && el.value.trim()) ? el.value.trim() : `Jugador ${i+1}`);
     }
     localStorage.setItem('impostor_last_names', JSON.stringify(names));
 
@@ -643,6 +822,7 @@ restartBtn.addEventListener('click', ()=>{
     createPlayerInputs(); // inputs vacíos
   }
 });
+
 // ===== RENDERIZAR RESUMEN =====
 function renderSummary(){
   summaryList.innerHTML=''; players.forEach(p=>{const li=document.createElement('li'); li.textContent=`${p.name} — ${p.isImpostor?'IMPOSTOR':p.theme}`; if(p.isImpostor) li.classList.add('impostor'); summaryList.appendChild(li);});
