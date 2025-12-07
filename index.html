@@ -58,6 +58,11 @@
         <input id="customThemeInput" type="text" placeholder="Tema personalizado (ej. Frutas raras)">
       </div>
 
+      <div id="customHintDiv" style="display:none;margin-top:10px">
+        <label for="customHintInput">Escribe la pista para el impostor:</label>
+        <input id="customHintInput" type="text" placeholder="Pista personalizada (ej. Es rojo)">
+      </div>
+
       <!-- Checkbox convertido en toggle visual para activar pistas -->
       <div style="margin-top:10px">
         <label style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
@@ -388,6 +393,8 @@
       const categorySelect = document.getElementById('categorySelect');
       const customThemeDiv = document.getElementById('customThemeDiv');
       const customThemeInput = document.getElementById('customThemeInput');
+      const customHintDiv = document.getElementById('customHintDiv');
+      const customHintInput = document.getElementById('customHintInput');
       const startBtn = document.getElementById('startBtn');
       const resumeBtn = document.getElementById('resumeBtn');
       const nightModeBtn = document.getElementById('nightModeBtn');
@@ -445,10 +452,21 @@
       numPlayersSelect.addEventListener('change', createPlayerInputs);
 
 
-      // ===== CUSTOM THEME =====
-      categorySelect.addEventListener('change', () => {
-        customThemeDiv.style.display = (categorySelect.value === 'Personalizado') ? 'block' : 'none';
-      });
+      // ===== CUSTOM THEME & HINT =====
+      function updateCustomUI() {
+        const isCustom = categorySelect.value === 'Personalizado';
+        customThemeDiv.style.display = isCustom ? 'block' : 'none';
+
+        // Mostrar input de pista SOLO si es personalizado Y pistas activadas
+        if (isCustom && enableHintsCheckbox.checked) {
+          customHintDiv.style.display = 'block';
+        } else {
+          customHintDiv.style.display = 'none';
+        }
+      }
+
+      categorySelect.addEventListener('change', updateCustomUI);
+      enableHintsCheckbox.addEventListener('change', updateCustomUI);
 
       // ===== MODO NOCHE =====
       nightModeBtn.addEventListener('click', () => document.body.classList.toggle('night'));
@@ -481,9 +499,24 @@
         players.sort(() => Math.random() - 0.5);
         let assigned = 0; while (assigned < numImpostors) { const idx = Math.floor(Math.random() * players.length); if (!players[idx].isImpostor) { players[idx].isImpostor = true; assigned++; } }
         let category = categorySelect.value;
-        if (category === 'Personalizado') { const val = (customThemeInput.value || '').trim(); if (!val) { showAlert('Escribe un tema personalizado o elige otra categoría.'); return; } currentTheme = val; }
+        let customHintVal = '';
+        if (category === 'Personalizado') {
+          const val = (customThemeInput.value || '').trim();
+          if (!val) { showAlert('Escribe un tema personalizado o elige otra categoría.'); return; }
+          currentTheme = val;
+
+          // Si hay pistas activadas, validamos y guardamos la pista manual
+          if (enableHintsCheckbox.checked) {
+            customHintVal = (customHintInput.value || '').trim();
+            if (!customHintVal) { showAlert('Si activas pistas con tema personalizado, debes escribir una pista.'); return; }
+          }
+        }
         else { const list = themes[category] || themes.Aleatorio; currentTheme = list[Math.floor(Math.random() * list.length)]; }
-        players.forEach(p => { if (!p.isImpostor) p.theme = currentTheme; });
+
+        players.forEach(p => {
+          if (!p.isImpostor) p.theme = currentTheme;
+          else if (customHintVal) p.impostorHint = customHintVal;
+        });
         order = Array.from({ length: players.length }, (_, i) => i); order.sort(() => Math.random() - 0.5);
         currentIndex = 0; saveGame(); setupDiv.style.display = 'none'; roleScreen.style.display = 'block'; updateTurn();
       });
@@ -554,8 +587,8 @@
         // Si es impostor, mostramos 'IMPOSTOR' y (si está activado) una pista sutil
         if (p.isImpostor) {
           if (enableHintsCheckbox && enableHintsCheckbox.checked) {
-            // usamos currentTheme para buscar la pista asociada a la palabra elegida
-            const hint = pistas[currentTheme] || '';
+            // usamos currentTheme para buscar la pista asociada a la palabra elegida, O la pista personalizada si existe
+            const hint = p.impostorHint || (pistas[currentTheme] || '');
             roleDisplay.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;"><strong>IMPOSTOR</strong><span class="hint" style="margin-top:8px">Pista: ${hint}</span></div>`;
           } else {
             roleDisplay.textContent = 'IMPOSTOR';
